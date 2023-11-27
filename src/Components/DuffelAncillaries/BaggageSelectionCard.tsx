@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Modal,
   ScrollView,
@@ -17,35 +16,33 @@ import {
   Service,
   ServiceMetadata,
 } from '../../duffelTypes';
-
-const TITLE = 'Extra baggage';
-const SUBTITLE = 'Add any extra baggage you need for your trip';
+import i18n from '../../translation/index';
 
 export default function BaggageSelectionCard({
   offer,
   passengers,
+  lng,
 }: {
   offer: Offer;
   passengers: Passenger[];
+  lng: 'en' | 'fr';
 }) {
-  const { t } = useTranslation();
-  const [visible, setVisible] = useState(false);
+  const t = i18n.getFixedT(lng);
 
+  const [visible, setVisible] = useState(false);
   function handleModal() {
     setVisible(!visible);
   }
   function showModal() {
     setVisible(true);
   }
-
   return (
     <>
       <TouchableOpacity style={styles.container} onPress={showModal}>
         <Icon name="luggage" style={styles.iconStyle} />
         <View>
-          <Text>{t('welcome')}</Text>
-          <Text style={styles.titleStyle}>{TITLE}</Text>
-          <Text style={styles.subtitleStyle}>{SUBTITLE}</Text>
+          <Text style={styles.titleStyle}>{t('baggageCardTitle')}</Text>
+          <Text style={styles.subtitleStyle}>{t('baggageCardSubtitle')}</Text>
         </View>
       </TouchableOpacity>
       <BaggageSelectionModal
@@ -53,6 +50,7 @@ export default function BaggageSelectionCard({
         passengers={passengers}
         handleModal={handleModal}
         visible={visible}
+        t={t}
       />
     </>
   );
@@ -63,11 +61,13 @@ function BaggageSelectionModal({
   visible,
   offer,
   passengers,
+  t,
 }: {
   handleModal: () => void;
   visible: boolean;
   offer: Offer;
   passengers: Passenger[];
+  t: any;
 }) {
   return (
     <Modal
@@ -90,7 +90,11 @@ function BaggageSelectionModal({
                 style={{ height: 350, paddingBottom: 10 }}
                 keyboardShouldPersistTaps="always"
               >
-                <BaggageSelectionView offer={offer} passengers={passengers} />
+                <BaggageSelectionView
+                  t={t}
+                  offer={offer}
+                  passengers={passengers}
+                />
               </ScrollView>
             </View>
           </TouchableWithoutFeedback>
@@ -103,9 +107,11 @@ function BaggageSelectionModal({
 function BaggageSelectionView({
   offer,
   passengers,
+  t,
 }: {
   offer: Offer;
   passengers: Passenger[];
+  t: any;
 }) {
   return (
     <>
@@ -114,6 +120,7 @@ function BaggageSelectionView({
           offer={offer}
           slice={offer.slices?.[0]}
           passengers={passengers}
+          t={t}
         />
       ) : (
         <></>
@@ -125,12 +132,16 @@ function SliceBaggageSelection({
   offer,
   slice,
   passengers,
+  t,
 }: {
   offer: Offer;
   slice: OfferSlice;
   passengers: Passenger[];
+  t: any;
 }) {
-  const title = `Vol de ${slice.origin.iata_city_code} à ${slice.destination.iata_city_code}`;
+  const title = `${t('flightFrom')} ${slice.origin.iata_city_code} ${t('to')} ${
+    slice.destination.iata_city_code
+  }`;
 
   return (
     <View>
@@ -138,6 +149,7 @@ function SliceBaggageSelection({
       {passengers?.map((p, i) => {
         return (
           <PassengerBagage
+            t={t}
             passenger={p}
             index={i}
             slice={slice}
@@ -154,11 +166,13 @@ function PassengerBagage({
   index,
   slice,
   offer,
+  t,
 }: {
   passenger: Passenger;
   index: number;
   slice: OfferSlice;
   offer: Offer;
+  t: any;
 }) {
   const includedBaggage = slice.segments?.[0]?.passengers?.[index]?.baggages;
   const segmentId = slice.segments?.[0]?.id ?? '';
@@ -179,7 +193,7 @@ function PassengerBagage({
         style={styles.passengerName}
       >{`${passenger.given_name} ${passenger.family_name}`}</Text>
       {hasIncludedBaggage && includedBaggage ? (
-        <IncludedBaggageBanner includedBaggage={includedBaggage} />
+        <IncludedBaggageBanner includedBaggage={includedBaggage} t={t} />
       ) : null}
 
       {passengerServicesForSegment.map((availableService) => (
@@ -208,9 +222,7 @@ function PassengerBagage({
         />
       ))}
       {passengerServicesForSegment.length === 0 && (
-        <Text style={styles.addBagageNotAvailableText}>
-          Aucun bagage supplémentaire disponible pour ce passager
-        </Text>
+        <Text style={styles.addBagageNotAvailableText}>{t('noBaggage')}</Text>
       )}
     </View>
   );
@@ -305,8 +317,10 @@ function Counter() {
 
 function IncludedBaggageBanner({
   includedBaggage,
+  t,
 }: {
   includedBaggage: OfferSliceSegmentPassengerBaggage[];
+  t: any;
 }) {
   const { carryOnBagsQuantity, checkedBagsQuantity } = includedBaggage.reduce(
     (sum, { type, quantity }) => ({
@@ -324,18 +338,18 @@ function IncludedBaggageBanner({
   const baggageLabelStringArray = [];
   if (carryOnBagsQuantity > 0) {
     baggageLabelStringArray.push(
-      withPlural(carryOnBagsQuantity, 'bagage cabine', 'bagages cabine')
+      withPlural(carryOnBagsQuantity, t('cabinBag'), t('cabinBags'))
     );
   }
   if (checkedBagsQuantity > 0) {
     baggageLabelStringArray.push(
-      withPlural(checkedBagsQuantity, 'bagage en soute', 'bagages en soute')
+      withPlural(checkedBagsQuantity, t('checkedBag'), t('checkedBags'))
     );
   }
   return (
     <View style={styles.includedBagBannerView}>
       <Text style={styles.includedBagText}>
-        {baggageLabelStringArray.join(' et ')} inclus
+        {`${baggageLabelStringArray.join(` ${t('and')} `)} ${t('included')}`}
       </Text>
     </View>
   );
