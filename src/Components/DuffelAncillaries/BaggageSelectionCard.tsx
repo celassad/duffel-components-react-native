@@ -108,11 +108,17 @@ function BaggageSelectionView({
   passengers: Passenger[];
 }) {
   return (
-    <SliceBaggageSelection
-      offer={offer}
-      slice={offer.slices?.[0]}
-      passengers={passengers}
-    />
+    <>
+      {offer.slices?.[0] ? (
+        <SliceBaggageSelection
+          offer={offer}
+          slice={offer.slices?.[0]}
+          passengers={passengers}
+        />
+      ) : (
+        <></>
+      )}
+    </>
   );
 }
 function SliceBaggageSelection({
@@ -154,7 +160,8 @@ function PassengerBagage({
   slice: OfferSlice;
   offer: Offer;
 }) {
-  const includedBaggage = slice?.segments?.[0]?.passengers?.[index]?.baggages;
+  const includedBaggage = slice.segments?.[0]?.passengers?.[index]?.baggages;
+  const segmentId = slice.segments?.[0]?.id ?? '';
   const hasIncludedBaggage = includedBaggage?.reduce(
     (sum, bag) => sum + bag.quantity,
     0
@@ -163,7 +170,7 @@ function PassengerBagage({
     ({ type, passenger_ids, segment_ids }) =>
       type === 'baggage' &&
       passenger_ids.includes(passenger.id) &&
-      segment_ids.includes(slice?.segments?.[0]?.id)
+      segment_ids.includes(segmentId)
   ) as Service[];
 
   return (
@@ -171,7 +178,7 @@ function PassengerBagage({
       <Text
         style={styles.passengerName}
       >{`${passenger.given_name} ${passenger.family_name}`}</Text>
-      {hasIncludedBaggage ? (
+      {hasIncludedBaggage && includedBaggage ? (
         <IncludedBaggageBanner includedBaggage={includedBaggage} />
       ) : null}
 
@@ -179,7 +186,7 @@ function PassengerBagage({
         <BaggageSelectionController
           key={availableService.id}
           passengerId={passenger.id}
-          segmentId={slice.segments?.[0]?.id}
+          segmentId={segmentId}
           availableService={availableService}
           // selectedServices={selectedServices}
           // quantity={
@@ -258,7 +265,6 @@ function BaggageSelectionController({
   const serviceDescription = getBaggageServiceDescription(
     availableService.metadata
   );
-
   //   const shouldDisableController =
   //     hasServiceOfSameMetadataTypeAlreadyBeenSelected(
   //       selectedServices,
@@ -278,6 +284,8 @@ function BaggageSelectionController({
         <Text>{serviceName}</Text>
         <Text>{servicePrice}</Text>
         <Text>{serviceDescription}</Text>
+        <Text>{passengerId}</Text>
+        <Text>{segmentId}</Text>
       </View>
       <Counter />
     </View>
