@@ -255,6 +255,9 @@ function TabView({
   >;
 }) {
   const slice = offer.slices?.[index];
+  if (!slice) {
+    return <></>;
+  }
   return (
     <View>
       <SliceBaggageSelection
