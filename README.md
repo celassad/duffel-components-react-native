@@ -11,11 +11,15 @@ npm install duffel-components-react-native
 ## Usage
 
 ```js
-import { multiply } from 'duffel-components-react-native';
+import { BaggageSelectionCard } from 'duffel-components-react-native';
+```
 
-// ...
-
-const result = await multiply(3, 7);
+```js
+<BaggageSelectionCard
+    lng="fr"
+    offer={offer}
+    passengers={passengers}
+/>
 ```
 
 ## Contributing
