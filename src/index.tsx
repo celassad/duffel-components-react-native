@@ -1,3 +1,3 @@
-import BaggageSelectionCard from './Components/DuffelAncillaries/BaggageSelectionCard';
+import BaggageSelectionCard from './Components/DuffelAncillaries/bags/BaggageSelectionCard';
 
 export { BaggageSelectionCard };
