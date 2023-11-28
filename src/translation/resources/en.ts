@@ -11,4 +11,8 @@ export default {
   checkedBags: 'checked bags',
   included: 'included',
   and: 'and',
+  upTo: 'up to',
+  priceFor: 'price for',
+  extraBag: 'extra bag',
+  extraBags: 'extra bags',
 };

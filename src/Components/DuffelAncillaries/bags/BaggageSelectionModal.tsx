@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Modal,
   ScrollView,
@@ -7,8 +7,14 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { Text } from 'react-native-elements';
-import { Offer, OfferSlice, Passenger } from '../../../duffelTypes';
+import { Button, Icon, Text } from 'react-native-elements';
+import {
+  Offer,
+  OfferSlice,
+  Passenger,
+  SelectedService,
+} from '../../../duffelTypes';
+import { withPlural } from './IncludedBaggageBanner';
 import PassengerBagage from './PassengerBaggage';
 
 export default function BaggageSelectionModal({
@@ -17,12 +23,18 @@ export default function BaggageSelectionModal({
   offer,
   passengers,
   t,
+  selectedBaggageServices,
+  setSelectedBaggageServices,
 }: {
   handleModal: () => void;
   visible: boolean;
   offer: Offer;
   passengers: Passenger[];
   t: any;
+  selectedBaggageServices: SelectedService[];
+  setSelectedBaggageServices: React.Dispatch<
+    React.SetStateAction<SelectedService[]>
+  >;
 }) {
   return (
     <Modal
@@ -42,13 +54,16 @@ export default function BaggageSelectionModal({
           <TouchableWithoutFeedback style={{ flex: 1 }}>
             <View style={styles.overlayStyle}>
               <ScrollView
-                style={{ height: 350, paddingBottom: 10 }}
+                style={{ height: '70%', paddingBottom: 10 }}
                 keyboardShouldPersistTaps="always"
               >
                 <BaggageSelectionView
                   t={t}
                   offer={offer}
                   passengers={passengers}
+                  handleModal={handleModal}
+                  selectedBaggageServices={selectedBaggageServices}
+                  setSelectedBaggageServices={setSelectedBaggageServices}
                 />
               </ScrollView>
             </View>
@@ -59,40 +74,217 @@ export default function BaggageSelectionModal({
   );
 }
 
+function TabHeader({
+  nbTabs,
+  index,
+  setIndex,
+}: {
+  nbTabs: number;
+  index: number;
+  setIndex: React.Dispatch<React.SetStateAction<number>>;
+}) {
+  var indicators: JSX.Element[] = [];
+
+  for (let i = 0; i < nbTabs; i++) {
+    indicators.push(
+      <Indicator index={i} selectedIndex={index} setIndex={setIndex} />
+    );
+  }
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        paddingBottom: 10,
+      }}
+    >
+      <>{indicators}</>
+    </View>
+  );
+}
+
+function Indicator({
+  index,
+  selectedIndex,
+  setIndex,
+}: {
+  index: number;
+  selectedIndex: number;
+  setIndex: React.Dispatch<React.SetStateAction<number>>;
+}) {
+  const isSelected = index === selectedIndex;
+  return (
+    <Icon
+      name="circle"
+      size={10}
+      iconStyle={{ padding: 6 }}
+      color={isSelected ? 'black' : 'lightgrey'}
+      onPress={() => {
+        setIndex(index);
+      }}
+    />
+  );
+}
+
 function BaggageSelectionView({
   offer,
   passengers,
   t,
+  handleModal,
+  selectedBaggageServices,
+  setSelectedBaggageServices,
 }: {
   offer: Offer;
   passengers: Passenger[];
   t: any;
+  handleModal: () => void;
+  selectedBaggageServices: SelectedService[];
+  setSelectedBaggageServices: React.Dispatch<
+    React.SetStateAction<SelectedService[]>
+  >;
 }) {
+  const [index, setIndex] = useState(0);
+  const nbTabs = offer.slices?.length ?? 0;
+  const isLastIndex = useMemo(() => {
+    return index === nbTabs - 1;
+  }, [index, nbTabs]);
+
+  const totalPrice = useMemo(() => {
+    var price = 0;
+    var currency = '';
+    selectedBaggageServices.map((s) => {
+      price += Number(s.service.total_amount) * s.quantity;
+      currency = s.service.total_currency;
+    });
+    return `${price} ${currency}`;
+  }, [selectedBaggageServices]);
+
+  const totalBags = useMemo(() => {
+    var bags = 0;
+    selectedBaggageServices.map((s) => {
+      bags += s.quantity;
+    });
+    return bags;
+  }, [selectedBaggageServices]);
+
   return (
-    <>
-      {offer.slices?.[0] ? (
-        <SliceBaggageSelection
-          offer={offer}
-          slice={offer.slices?.[0]}
-          passengers={passengers}
-          t={t}
-        />
-      ) : (
-        <></>
-      )}
-    </>
+    <View>
+      <TabHeader nbTabs={nbTabs} index={index} setIndex={setIndex} />
+      <TabView
+        index={index}
+        offer={offer}
+        passengers={passengers}
+        t={t}
+        selectedBaggageServices={selectedBaggageServices}
+        setSelectedBaggageServices={setSelectedBaggageServices}
+      />
+      <View
+        style={{ backgroundColor: 'lightgrey', height: 1, width: '100%' }}
+      />
+      <TotalPrice price={totalPrice} nbBags={totalBags} t={t} />
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        {index === 0 ? (
+          <View />
+        ) : (
+          <Button
+            title="retour"
+            onPress={() => {
+              setIndex(index - 1);
+            }}
+          />
+        )}
+        {isLastIndex ? (
+          <Button title="confirmer" onPress={handleModal} />
+        ) : (
+          <Button
+            title="suivant"
+            onPress={() => {
+              setIndex(index + 1);
+            }}
+          />
+        )}
+      </View>
+    </View>
   );
 }
+
+function TotalPrice({
+  price,
+  nbBags,
+  t,
+}: {
+  price: string;
+  nbBags: number;
+  t: any;
+}) {
+  const text = `${t('priceFor')} ${withPlural(
+    nbBags,
+    `${t('extraBag')}`,
+    `${t('extraBags')}`
+  )}`;
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginVertical: 10,
+        alignItems: 'center',
+      }}
+    >
+      <Text style={{ fontSize: 14, textTransform: 'capitalize' }}>{text}</Text>
+      <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{price}</Text>
+    </View>
+  );
+}
+
+function TabView({
+  offer,
+  passengers,
+  t,
+  index,
+  selectedBaggageServices,
+  setSelectedBaggageServices,
+}: {
+  offer: Offer;
+  passengers: Passenger[];
+  t: any;
+  index: number;
+  selectedBaggageServices: SelectedService[];
+  setSelectedBaggageServices: React.Dispatch<
+    React.SetStateAction<SelectedService[]>
+  >;
+}) {
+  const slice = offer.slices?.[index];
+  return (
+    <View>
+      <SliceBaggageSelection
+        offer={offer}
+        slice={slice}
+        passengers={passengers}
+        t={t}
+        selectedBaggageServices={selectedBaggageServices}
+        setSelectedBaggageServices={setSelectedBaggageServices}
+      />
+    </View>
+  );
+}
+
 function SliceBaggageSelection({
   offer,
   slice,
   passengers,
   t,
+  selectedBaggageServices,
+  setSelectedBaggageServices,
 }: {
   offer: Offer;
   slice: OfferSlice;
   passengers: Passenger[];
   t: any;
+  selectedBaggageServices: SelectedService[];
+  setSelectedBaggageServices: React.Dispatch<
+    React.SetStateAction<SelectedService[]>
+  >;
 }) {
   const title = `${t('flightFrom')} ${slice.origin.iata_city_code} ${t('to')} ${
     slice.destination.iata_city_code
@@ -109,6 +301,8 @@ function SliceBaggageSelection({
             index={i}
             slice={slice}
             offer={offer}
+            selectedBaggageServices={selectedBaggageServices}
+            setSelectedBaggageServices={setSelectedBaggageServices}
           />
         );
       })}

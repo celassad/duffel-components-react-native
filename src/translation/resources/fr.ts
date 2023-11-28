@@ -11,4 +11,8 @@ export default {
   checkedBags: 'bagages en soute',
   included: 'inclus',
   and: 'et',
+  upTo: "jusqu'à",
+  priceFor: 'prix pour',
+  extraBag: 'bagage supplémentaire',
+  extraBags: 'bagages supplémentaires',
 };

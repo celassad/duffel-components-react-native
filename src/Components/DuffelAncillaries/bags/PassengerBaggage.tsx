@@ -1,7 +1,13 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-elements';
-import { Offer, OfferSlice, Passenger, Service } from '../../../duffelTypes';
+import {
+  Offer,
+  OfferSlice,
+  Passenger,
+  SelectedService,
+  Service,
+} from '../../../duffelTypes';
 import BaggageSelectionController from './BaggageSelectionController';
 import IncludedBaggageBanner from './IncludedBaggageBanner';
 
@@ -11,12 +17,18 @@ export default function PassengerBagage({
   slice,
   offer,
   t,
+  selectedBaggageServices,
+  setSelectedBaggageServices,
 }: {
   passenger: Passenger;
   index: number;
   slice: OfferSlice;
   offer: Offer;
   t: any;
+  selectedBaggageServices: SelectedService[];
+  setSelectedBaggageServices: React.Dispatch<
+    React.SetStateAction<SelectedService[]>
+  >;
 }) {
   const includedBaggage = slice.segments?.[0]?.passengers?.[index]?.baggages;
   const segmentId = slice.segments?.[0]?.id ?? '';
@@ -30,9 +42,8 @@ export default function PassengerBagage({
       passenger_ids.includes(passenger.id) &&
       segment_ids.includes(segmentId)
   ) as Service[];
-
   return (
-    <View>
+    <View style={{ marginBottom: 10 }}>
       <Text
         style={styles.passengerName}
       >{`${passenger.given_name} ${passenger.family_name}`}</Text>
@@ -44,26 +55,9 @@ export default function PassengerBagage({
         <BaggageSelectionController
           key={availableService.id}
           t={t}
-          passengerId={passenger.id}
-          segmentId={segmentId}
           availableService={availableService}
-          // selectedServices={selectedServices}
-          // quantity={
-          //     selectedServices.find(
-          //         ({ id }) => id == availableService.id
-          //     )?.quantity || 0
-          // }
-          // onQuantityChanged={(newQuantity) =>
-          //     onBaggageQuantityChanged(
-          //         newQuantity,
-          //         segmentId,
-          //         passengerId,
-          //         passengerName,
-          //         availableService,
-          //         selectedServices,
-          //         setSelectedServices
-          //     )
-          // }
+          selectedBaggageServices={selectedBaggageServices}
+          setSelectedBaggageServices={setSelectedBaggageServices}
         />
       ))}
       {passengerServicesForSegment.length === 0 && (

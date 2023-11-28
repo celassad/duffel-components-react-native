@@ -1,18 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon, Text } from 'react-native-elements';
-import { Service, ServiceMetadata } from '../../../duffelTypes';
+import {
+  SelectedService,
+  Service,
+  ServiceMetadata,
+} from '../../../duffelTypes';
+
+function getServiceQuantity(
+  service: Service,
+  selectedServices: SelectedService[]
+) {
+  var serviceQuantity = 0;
+  selectedServices?.map((s) => {
+    if (s.service.id === service.id) {
+      serviceQuantity = s.quantity;
+    }
+  });
+  return serviceQuantity;
+}
 
 export default function BaggageSelectionController({
   availableService,
-  passengerId,
-  segmentId,
   t,
+  selectedBaggageServices,
+  setSelectedBaggageServices,
 }: {
   availableService: Service;
-  passengerId: string;
-  segmentId: string;
   t: any;
+  selectedBaggageServices: SelectedService[];
+  setSelectedBaggageServices: React.Dispatch<
+    React.SetStateAction<SelectedService[]>
+  >;
 }) {
   const serviceName =
     availableService.metadata.type === 'carry_on'
@@ -20,32 +39,66 @@ export default function BaggageSelectionController({
       : `${t('checkedBag')}`;
 
   const servicePrice = `${availableService.total_amount} ${availableService.total_currency}`;
+  const serviceQuantity = getServiceQuantity(
+    availableService,
+    selectedBaggageServices
+  );
+  const [quantity, setQuantity] = useState(serviceQuantity);
+
+  function selectService(quantity: number) {
+    var selectedServices: SelectedService[] = [];
+
+    selectedBaggageServices.map((selectedService) => {
+      if (selectedService.service.id !== availableService.id) {
+        selectedServices.push(selectedService);
+      }
+    });
+    const newSelectedService = {
+      service: availableService,
+      quantity: quantity,
+    };
+    selectedServices.push(newSelectedService);
+    setSelectedBaggageServices(selectedServices);
+  }
 
   const serviceDescription = getBaggageServiceDescription(
-    availableService.metadata
+    availableService.metadata,
+    t
   );
-  //   const shouldDisableController =
-  //     hasServiceOfSameMetadataTypeAlreadyBeenSelected(
-  //       selectedServices,
-  //       segmentId,
-  //       passengerId,
-  //       availableService
-  //     );
+
   return (
     <View style={styles.containerStyle}>
       <View>
-        <Text>{serviceName}</Text>
-        <Text>{servicePrice}</Text>
-        <Text>{serviceDescription}</Text>
-        <Text>{passengerId}</Text>
-        <Text>{segmentId}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={{ textTransform: 'capitalize', fontSize: 16 }}>
+            {serviceName}
+          </Text>
+          <Icon
+            name="circle"
+            size={5}
+            iconStyle={{ padding: 5 }}
+            color="lightgrey"
+          />
+          <Text style={{ fontWeight: 'bold' }}>{servicePrice}</Text>
+        </View>
+        <Text style={{ color: 'grey', textTransform: 'capitalize' }}>
+          {serviceDescription}
+        </Text>
       </View>
-      <Counter />
+      <Counter
+        selectService={selectService}
+        quantity={quantity}
+        setQuantity={setQuantity}
+        maxQuantity={availableService.maximum_quantity}
+      />
     </View>
   );
 }
 
-export const getBaggageServiceDescription = (metadata: ServiceMetadata) => {
+export const getBaggageServiceDescription = (
+  metadata: ServiceMetadata,
+  t: any
+) => {
   if (!metadata) {
     return null;
   }
@@ -71,19 +124,60 @@ export const getBaggageServiceDescription = (metadata: ServiceMetadata) => {
 
   let weightLabel = '';
   if (metadata.maximum_weight_kg) {
-    weightLabel = `Up to ${metadata.maximum_weight_kg}kg`;
+    weightLabel = `${t('upTo')} ${metadata.maximum_weight_kg}kg`;
   }
 
   return `${weightLabel}${dimensionsLabel}`;
 };
 
-function Counter() {
+function Counter({
+  quantity,
+  setQuantity,
+  maxQuantity,
+  selectService,
+}: {
+  quantity: number;
+  setQuantity: React.Dispatch<React.SetStateAction<number>>;
+  maxQuantity: number;
+  selectService: (quantity: number) => void;
+}) {
   return (
-    <View style={{ flexDirection: 'row' }}>
-      <Icon name="remove" containerStyle={{ borderWidth: 1 }} />
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Icon
+        name="remove"
+        size={14}
+        iconStyle={{ padding: 5 }}
+        containerStyle={{
+          borderWidth: 1,
+          borderColor: 'lightgrey',
+          borderRadius: 5,
+        }}
+        onPress={() => {
+          if (quantity > 0) {
+            selectService(quantity - 1);
+            setQuantity(quantity - 1);
+          }
+        }}
+      />
 
-      <Text style={{ padding: 5 }}>0</Text>
-      <Icon name="add" containerStyle={{ borderWidth: 1 }} />
+      <Text style={{ paddingHorizontal: 10 }}>{quantity}</Text>
+
+      <Icon
+        name="add"
+        size={14}
+        iconStyle={{ padding: 5 }}
+        containerStyle={{
+          borderWidth: 1,
+          borderColor: 'lightgrey',
+          borderRadius: 5,
+        }}
+        onPress={() => {
+          if (quantity < maxQuantity) {
+            selectService(quantity + 1);
+            setQuantity(quantity + 1);
+          }
+        }}
+      />
     </View>
   );
 }
@@ -92,6 +186,8 @@ const styles = StyleSheet.create({
   containerStyle: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    marginVertical: 5,
+    marginLeft: 10,
   },
 });

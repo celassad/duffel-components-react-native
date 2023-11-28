@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Icon, Text } from 'react-native-elements';
-import { Offer, Passenger } from '../../../duffelTypes';
+import { Offer, Passenger, SelectedService } from '../../../duffelTypes';
 import i18n from '../../../translation/index';
 import BaggageSelectionModal from './BaggageSelectionModal';
 
@@ -17,6 +17,10 @@ export default function BaggageSelectionCard({
   const t = i18n.getFixedT(lng);
 
   const [visible, setVisible] = useState(false);
+  const [selectedBaggageServices, setSelectedBaggageServices] = useState<
+    SelectedService[]
+  >([]);
+
   function handleModal() {
     setVisible(!visible);
   }
@@ -37,6 +41,8 @@ export default function BaggageSelectionCard({
         passengers={passengers}
         handleModal={handleModal}
         visible={visible}
+        selectedBaggageServices={selectedBaggageServices}
+        setSelectedBaggageServices={setSelectedBaggageServices}
         t={t}
       />
     </>

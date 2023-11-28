@@ -15,6 +15,11 @@ export interface OrderServiceMetadataSeat {
   disclosures: string[];
 }
 
+export type SelectedService = {
+  service: Service;
+  quantity: number;
+};
+
 export type DuffelApiModelsOrderOrderServiceMetadata =
   | OrderServiceMetadataSeat
   | OrderServiceMetadataBaggage;
