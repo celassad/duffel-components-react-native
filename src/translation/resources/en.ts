@@ -15,4 +15,7 @@ export default {
   priceFor: 'price for',
   extraBag: 'extra bag',
   extraBags: 'extra bags',
+  bagAdded: 'bag added',
+  bagsAdded: 'bags added',
+  for: 'for',
 };

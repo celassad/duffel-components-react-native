@@ -4,6 +4,7 @@ import { Icon, Text } from 'react-native-elements';
 import { Offer, Passenger, SelectedService } from '../../../duffelTypes';
 import i18n from '../../../translation/index';
 import BaggageSelectionModal from './BaggageSelectionModal';
+import { getBagsAddedText } from './helpers';
 
 export default function BaggageSelectionCard({
   offer,
@@ -30,13 +31,15 @@ export default function BaggageSelectionCard({
   function showModal() {
     setVisible(true);
   }
+
+  const subtitle = getBagsAddedText(selectedBaggageServices, t);
   return (
     <>
       <TouchableOpacity style={styles.container} onPress={showModal}>
         <Icon name="luggage" style={styles.iconStyle} />
         <View>
           <Text style={styles.titleStyle}>{t('baggageCardTitle')}</Text>
-          <Text style={styles.subtitleStyle}>{t('baggageCardSubtitle')}</Text>
+          <Text style={styles.subtitleStyle}>{subtitle}</Text>
         </View>
       </TouchableOpacity>
       <BaggageSelectionModal

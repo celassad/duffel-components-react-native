@@ -15,4 +15,7 @@ export default {
   priceFor: 'prix pour',
   extraBag: 'bagage supplémentaire',
   extraBags: 'bagages supplémentaires',
+  bagAdded: 'bagage ajouté',
+  bagsAdded: 'bagages ajoutés',
+  for: 'pour',
 };

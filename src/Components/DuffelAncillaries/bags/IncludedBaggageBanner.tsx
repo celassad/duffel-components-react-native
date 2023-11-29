@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-elements';
 import { OfferSliceSegmentPassengerBaggage } from '../../../duffelTypes';
+import { withPlural } from './helpers';
 
 export default function IncludedBaggageBanner({
   includedBaggage,
@@ -41,10 +42,6 @@ export default function IncludedBaggageBanner({
       </Text>
     </View>
   );
-}
-
-export function withPlural(quantity: number, singular: string, plural: string) {
-  return quantity > 1 ? `${quantity} ${plural}` : `${quantity} ${singular}`;
 }
 
 const styles = StyleSheet.create({
