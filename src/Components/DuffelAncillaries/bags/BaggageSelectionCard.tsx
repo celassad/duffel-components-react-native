@@ -9,17 +9,20 @@ export default function BaggageSelectionCard({
   offer,
   passengers,
   lng,
+  selectedBaggageServices,
+  setSelectedBaggageServices,
 }: {
   offer: Offer;
   passengers: Passenger[];
   lng: 'en' | 'fr';
+  selectedBaggageServices: SelectedService[];
+  setSelectedBaggageServices: React.Dispatch<
+    React.SetStateAction<SelectedService[]>
+  >;
 }) {
   const t = i18n.getFixedT(lng);
 
   const [visible, setVisible] = useState(false);
-  const [selectedBaggageServices, setSelectedBaggageServices] = useState<
-    SelectedService[]
-  >([]);
 
   function handleModal() {
     setVisible(!visible);

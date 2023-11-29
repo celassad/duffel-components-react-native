@@ -6,7 +6,7 @@ import {
   OfferSlice,
   Passenger,
   SelectedService,
-  Service,
+  Service
 } from '../../../duffelTypes';
 import BaggageSelectionController from './BaggageSelectionController';
 import IncludedBaggageBanner from './IncludedBaggageBanner';
@@ -43,7 +43,7 @@ export default function PassengerBagage({
       segment_ids.includes(segmentId)
   ) as Service[];
   return (
-    <View style={{ marginBottom: 10 }}>
+    <View style={{ marginBottom: 10 }} key={passenger.id}>
       <Text
         style={styles.passengerName}
       >{`${passenger.given_name} ${passenger.family_name}`}</Text>
