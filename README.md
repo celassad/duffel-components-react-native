@@ -12,14 +12,31 @@ npm install duffel-components-react-native
 
 ```js
 import { BaggageSelectionCard } from 'duffel-components-react-native';
+import { SelectedService, Offer, Passenger } from 'duffel-components-react-native/lib/typescript/src/duffelTypes';
 ```
 
 ```js
-<BaggageSelectionCard
-    lng="fr"
-    offer={offer}
-    passengers={passengers}
-/>
+
+function BaggageSelection({
+    offer, 
+    passengers
+}:{
+    offer: Offer;
+    passengers: Passenger[];
+}) {
+    const [services, setServices] = useState<SelectedService[]>([]);
+    return (
+        <>
+            <BaggageSelectionCard
+                lng="fr"
+                offer={offer}
+                passengers={passengers}
+                selectedBaggageServices={services}
+                setSelectedBaggageServices={setServices}
+            />
+        </>
+    );
+}
 ```
 
 ## Contributing
