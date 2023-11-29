@@ -14,7 +14,7 @@ import {
   Passenger,
   SelectedService,
 } from '../../../duffelTypes';
-import { withPlural } from './IncludedBaggageBanner';
+import { withPlural } from './helpers';
 import PassengerBagage from './PassengerBaggage';
 
 export default function BaggageSelectionModal({
