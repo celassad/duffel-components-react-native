@@ -2,6 +2,12 @@
 
 A react-native component library for Duffel components
 
+
+<p float="left">
+  <img src='images/screenshot1.jpg' width='250'>
+  <img src='images/screenshot2.jpg' width='250'>
+</p>
+
 ## Installation
 
 ```sh
