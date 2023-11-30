@@ -187,20 +187,26 @@ function BaggageSelectionView({
           <View />
         ) : (
           <Button
-            title="retour"
+            title={t('back')}
             onPress={() => {
               setIndex(index - 1);
             }}
+            titleStyle={styles.buttonTitle}
           />
         )}
         {isLastIndex ? (
-          <Button title="confirmer" onPress={handleModal} />
+          <Button
+            title={t('confirm')}
+            onPress={handleModal}
+            titleStyle={styles.buttonTitle}
+          />
         ) : (
           <Button
-            title="suivant"
+            title={t('next')}
             onPress={() => {
               setIndex(index + 1);
             }}
+            titleStyle={styles.buttonTitle}
           />
         )}
       </View>
@@ -316,6 +322,9 @@ function SliceBaggageSelection({
 const BORDER_RADIUS = 20;
 
 const styles = StyleSheet.create({
+  buttonTitle: {
+    textTransform: 'capitalize',
+  },
   overlayStyle: {
     backgroundColor: 'white',
     borderTopLeftRadius: BORDER_RADIUS,

@@ -18,4 +18,7 @@ export default {
   bagAdded: 'bagage ajouté',
   bagsAdded: 'bagages ajoutés',
   for: 'pour',
+  next: 'suivant',
+  back: 'retour',
+  confirm: 'confirmer',
 };

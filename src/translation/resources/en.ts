@@ -18,4 +18,7 @@ export default {
   bagAdded: 'bag added',
   bagsAdded: 'bags added',
   for: 'for',
+  next: 'next',
+  back: 'back',
+  confirm: 'confirm',
 };
