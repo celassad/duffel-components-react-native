@@ -6,6 +6,7 @@ import {
   Service,
   ServiceMetadata,
 } from '../../../duffelTypes';
+import { capitalizeFirstLetter } from './helpers';
 
 function getServiceQuantity(
   service: Service,
@@ -33,10 +34,11 @@ export default function BaggageSelectionController({
     React.SetStateAction<SelectedService[]>
   >;
 }) {
-  const serviceName =
+  const serviceName = capitalizeFirstLetter(
     availableService.metadata.type === 'carry_on'
       ? `${t('cabinBag')}`
-      : `${t('checkedBag')}`;
+      : `${t('checkedBag')}`
+  );
 
   const servicePrice = `${availableService.total_amount} ${availableService.total_currency}`;
   const serviceQuantity = getServiceQuantity(
@@ -70,9 +72,7 @@ export default function BaggageSelectionController({
     <View style={styles.containerStyle}>
       <View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ textTransform: 'capitalize', fontSize: 16 }}>
-            {serviceName}
-          </Text>
+          <Text style={{ fontSize: 16 }}>{serviceName}</Text>
           <Icon
             name="circle"
             size={5}
@@ -124,7 +124,7 @@ export const getBaggageServiceDescription = (
 
   let weightLabel = '';
   if (metadata.maximum_weight_kg) {
-    weightLabel = `${t('upTo')} ${metadata.maximum_weight_kg}kg`;
+    weightLabel = `${t('upTo')} ${metadata.maximum_weight_kg} kg`;
   }
 
   return `${weightLabel}${dimensionsLabel}`;

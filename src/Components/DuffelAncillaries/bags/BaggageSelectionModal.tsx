@@ -14,7 +14,7 @@ import {
   Passenger,
   SelectedService,
 } from '../../../duffelTypes';
-import { withPlural } from './helpers';
+import { capitalizeFirstLetter, withPlural } from './helpers';
 import PassengerBagage from './PassengerBaggage';
 
 export default function BaggageSelectionModal({
@@ -54,7 +54,7 @@ export default function BaggageSelectionModal({
           <TouchableWithoutFeedback style={{ flex: 1 }}>
             <View style={styles.overlayStyle}>
               <ScrollView
-                style={{ height: '70%', paddingBottom: 10 }}
+                style={{ paddingBottom: 10 }}
                 keyboardShouldPersistTaps="always"
               >
                 <BaggageSelectionView
@@ -145,9 +145,6 @@ function BaggageSelectionView({
 }) {
   const [index, setIndex] = useState(0);
   const nbTabs = offer.slices?.length ?? 0;
-  const isLastIndex = useMemo(() => {
-    return index === nbTabs - 1;
-  }, [index, nbTabs]);
 
   const totalPrice = useMemo(() => {
     var price = 0;
@@ -182,35 +179,111 @@ function BaggageSelectionView({
         style={{ backgroundColor: 'lightgrey', height: 1, width: '100%' }}
       />
       <TotalPrice price={totalPrice} nbBags={totalBags} t={t} />
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        {index === 0 ? (
-          <View />
-        ) : (
-          <Button
-            title={t('back')}
-            onPress={() => {
-              setIndex(index - 1);
-            }}
-            titleStyle={styles.buttonTitle}
-          />
-        )}
-        {isLastIndex ? (
-          <Button
-            title={t('confirm')}
-            onPress={handleModal}
-            titleStyle={styles.buttonTitle}
-          />
-        ) : (
-          <Button
-            title={t('next')}
-            onPress={() => {
-              setIndex(index + 1);
-            }}
-            titleStyle={styles.buttonTitle}
-          />
-        )}
-      </View>
+      <TabFooter
+        index={index}
+        setIndex={setIndex}
+        t={t}
+        handleModal={handleModal}
+        nbTabs={nbTabs}
+      />
     </View>
+  );
+}
+
+function TabFooter({
+  index,
+  setIndex,
+  t,
+  handleModal,
+  nbTabs,
+}: {
+  index: number;
+  setIndex: React.Dispatch<React.SetStateAction<number>>;
+  t: any;
+  handleModal: () => void;
+  nbTabs: number;
+}) {
+  const isLastIndex = useMemo(() => {
+    return index === nbTabs - 1;
+  }, [index, nbTabs]);
+
+  if (index === 0) {
+    return (
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={styles.buttonContainerStyle} />
+        <NextButton t={t} index={index} setIndex={setIndex} />
+      </View>
+    );
+  } else if (isLastIndex) {
+    return (
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <BackButton t={t} index={index} setIndex={setIndex} />
+        <ConfirmButton t={t} onPress={handleModal} />
+      </View>
+    );
+  } else {
+    return (
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <BackButton t={t} index={index} setIndex={setIndex} />
+        <NextButton t={t} index={index} setIndex={setIndex} />
+      </View>
+    );
+  }
+}
+
+function BackButton({
+  index,
+  setIndex,
+  t,
+}: {
+  index: number;
+  setIndex: React.Dispatch<React.SetStateAction<number>>;
+  t: any;
+}) {
+  return (
+    <Button
+      title={t('back')}
+      onPress={() => {
+        setIndex(index - 1);
+      }}
+      titleStyle={styles.secondaryButtonTitleStyle}
+      buttonStyle={styles.secondaryButtonStyle}
+      containerStyle={styles.buttonContainerStyle}
+    />
+  );
+}
+
+function NextButton({
+  index,
+  setIndex,
+  t,
+}: {
+  index: number;
+  setIndex: React.Dispatch<React.SetStateAction<number>>;
+  t: any;
+}) {
+  return (
+    <Button
+      title={t('next')}
+      onPress={() => {
+        setIndex(index + 1);
+      }}
+      titleStyle={styles.primaryButtonTitleStyle}
+      buttonStyle={styles.primaryButtonStyle}
+      containerStyle={styles.buttonContainerStyle}
+    />
+  );
+}
+
+function ConfirmButton({ onPress, t }: { onPress: () => void; t: any }) {
+  return (
+    <Button
+      title={t('confirm')}
+      onPress={onPress}
+      titleStyle={styles.primaryButtonTitleStyle}
+      buttonStyle={styles.primaryButtonStyle}
+      containerStyle={styles.buttonContainerStyle}
+    />
   );
 }
 
@@ -223,22 +296,17 @@ function TotalPrice({
   nbBags: number;
   t: any;
 }) {
-  const text = `${t('priceFor')} ${withPlural(
-    nbBags,
-    `${t('extraBag')}`,
-    `${t('extraBags')}`
-  )}`;
+  const text = capitalizeFirstLetter(
+    `${t('priceFor')} ${withPlural(
+      nbBags,
+      `${t('extraBag')}`,
+      `${t('extraBags')}`
+    )}`
+  );
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginVertical: 10,
-        alignItems: 'center',
-      }}
-    >
-      <Text style={{ fontSize: 14, textTransform: 'capitalize' }}>{text}</Text>
-      <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{price}</Text>
+    <View style={styles.totalPriceViewStyle}>
+      <Text style={styles.priceLabel}>{text}</Text>
+      <Text style={styles.priceText}>{price}</Text>
     </View>
   );
 }
@@ -322,6 +390,43 @@ function SliceBaggageSelection({
 const BORDER_RADIUS = 20;
 
 const styles = StyleSheet.create({
+  priceText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  priceLabel: {
+    fontSize: 14,
+  },
+  totalPriceViewStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 10,
+    alignItems: 'center',
+  },
+  secondaryButtonTitleStyle: {
+    textTransform: 'capitalize',
+    color: 'black',
+  },
+  secondaryButtonStyle: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 5,
+  },
+  primaryButtonTitleStyle: {
+    textTransform: 'capitalize',
+    color: 'white',
+  },
+  primaryButtonStyle: {
+    backgroundColor: 'black',
+    borderWidth: 1,
+    borderColor: 'white',
+    borderRadius: 5,
+  },
+  buttonContainerStyle: {
+    flex: 1,
+    margin: 5,
+  },
   buttonTitle: {
     textTransform: 'capitalize',
   },
@@ -330,6 +435,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: BORDER_RADIUS,
     borderTopRightRadius: BORDER_RADIUS,
     padding: 30,
+    maxHeight: '90%',
   },
   overlay: {
     backgroundColor: 'rgba(0,0,0, 0.2)',

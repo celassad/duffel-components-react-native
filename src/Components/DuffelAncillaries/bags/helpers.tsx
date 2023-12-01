@@ -4,6 +4,11 @@ export function withPlural(quantity: number, singular: string, plural: string) {
   return quantity > 1 ? `${quantity} ${plural}` : `${quantity} ${singular}`;
 }
 
+export function capitalizeFirstLetter(str: string) {
+  const str2 = str.charAt(0).toUpperCase() + str.slice(1);
+  return str2;
+}
+
 export function getBagsAddedText(services: SelectedService[], t: any) {
   if (!services || services?.length === 0) {
     return t('baggageCardSubtitle');
