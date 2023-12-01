@@ -55,11 +55,13 @@ export default function BaggageSelectionController({
         selectedServices.push(selectedService);
       }
     });
-    const newSelectedService = {
-      service: availableService,
-      quantity: quantity,
-    };
-    selectedServices.push(newSelectedService);
+    if (quantity > 0) {
+      const newSelectedService = {
+        service: availableService,
+        quantity: quantity,
+      };
+      selectedServices.push(newSelectedService);
+    }
     setSelectedBaggageServices(selectedServices);
   }
 
@@ -153,7 +155,7 @@ function Counter({
           borderRadius: 5,
         }}
         onPress={() => {
-          if (quantity > 0) {
+          if (quantity >= 0) {
             selectService(quantity - 1);
             setQuantity(quantity - 1);
           }

@@ -28,3 +28,7 @@ export function getBagsAddedText(services: SelectedService[], t: any) {
     )} ${amount} ${currency}`;
   }
 }
+
+export function hasBagSelected(services: SelectedService[]) {
+  return services?.length > 0;
+}
