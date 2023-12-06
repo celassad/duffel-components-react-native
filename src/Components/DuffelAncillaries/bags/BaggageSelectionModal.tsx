@@ -10,11 +10,11 @@ import {
 import { Button, Icon, Text } from 'react-native-elements';
 import {
   Offer,
-  OfferSlice,
+  OfferSliceSegment,
   Passenger,
   SelectedService,
 } from '../../../duffelTypes';
-import { capitalizeFirstLetter, withPlural } from './helpers';
+import { capitalizeFirstLetter, getSegmentList, withPlural } from './helpers';
 import PassengerBagage from './PassengerBaggage';
 
 export default function BaggageSelectionModal({
@@ -87,7 +87,7 @@ function TabHeader({
 
   for (let i = 0; i < nbTabs; i++) {
     indicators.push(
-      <Indicator index={i} selectedIndex={index} setIndex={setIndex} />
+      <Indicator index={i} selectedIndex={index} setIndex={setIndex} key={i} />
     );
   }
   return (
@@ -144,8 +144,8 @@ function BaggageSelectionView({
   >;
 }) {
   const [index, setIndex] = useState(0);
-  const nbTabs = offer.slices?.length ?? 0;
-
+  const segments = getSegmentList(offer);
+  const nbTabs = segments?.length ?? 0;
   const totalPrice = useMemo(() => {
     var price = 0;
     var currency = '';
@@ -170,6 +170,7 @@ function BaggageSelectionView({
       <TabView
         index={index}
         offer={offer}
+        segments={segments}
         passengers={passengers}
         t={t}
         selectedBaggageServices={selectedBaggageServices}
@@ -318,6 +319,7 @@ function TabView({
   index,
   selectedBaggageServices,
   setSelectedBaggageServices,
+  segments,
 }: {
   offer: Offer;
   passengers: Passenger[];
@@ -327,16 +329,15 @@ function TabView({
   setSelectedBaggageServices: React.Dispatch<
     React.SetStateAction<SelectedService[]>
   >;
+  segments: OfferSliceSegment[];
 }) {
   const slice = offer.slices?.[index];
-  if (!slice) {
-    return <></>;
-  }
+  const segment = segments[index];
   return (
     <View>
-      <SliceBaggageSelection
+      <SegmentBaggageSelection
         offer={offer}
-        slice={slice}
+        segment={segment}
         passengers={passengers}
         t={t}
         selectedBaggageServices={selectedBaggageServices}
@@ -346,16 +347,16 @@ function TabView({
   );
 }
 
-function SliceBaggageSelection({
+function SegmentBaggageSelection({
   offer,
-  slice,
+  segment,
   passengers,
   t,
   selectedBaggageServices,
   setSelectedBaggageServices,
 }: {
   offer: Offer;
-  slice: OfferSlice;
+  segment: OfferSliceSegment;
   passengers: Passenger[];
   t: any;
   selectedBaggageServices: SelectedService[];
@@ -363,8 +364,8 @@ function SliceBaggageSelection({
     React.SetStateAction<SelectedService[]>
   >;
 }) {
-  const title = `${t('flightFrom')} ${slice.origin.iata_city_code} ${t('to')} ${
-    slice.destination.iata_city_code
+  const title = `${t('flightFrom')} ${segment.origin.iata_code} ${t('to')} ${
+    segment.destination.iata_code
   }`;
 
   return (
@@ -374,9 +375,10 @@ function SliceBaggageSelection({
         return (
           <PassengerBagage
             t={t}
+            key={p.id}
             passenger={p}
             index={i}
-            slice={slice}
+            segment={segment}
             offer={offer}
             selectedBaggageServices={selectedBaggageServices}
             setSelectedBaggageServices={setSelectedBaggageServices}

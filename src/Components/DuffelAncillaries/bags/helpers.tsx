@@ -1,4 +1,8 @@
-import { SelectedService } from '../../../duffelTypes';
+import {
+  Offer,
+  OfferSliceSegment,
+  SelectedService,
+} from '../../../duffelTypes';
 
 export function withPlural(quantity: number, singular: string, plural: string) {
   return quantity > 1 ? `${quantity} ${plural}` : `${quantity} ${singular}`;
@@ -32,3 +36,9 @@ export function getBagsAddedText(services: SelectedService[], t: any) {
 export function hasBagSelected(services: SelectedService[]) {
   return services?.length > 0;
 }
+
+export const getSegmentList = (offer: Offer) =>
+  offer.slices.reduce(
+    (accumulator, slice) => [...accumulator, ...slice.segments],
+    new Array<OfferSliceSegment>()
+  );

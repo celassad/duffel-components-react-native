@@ -3,10 +3,10 @@ import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-elements';
 import {
   Offer,
-  OfferSlice,
+  OfferSliceSegment,
   Passenger,
   SelectedService,
-  Service
+  Service,
 } from '../../../duffelTypes';
 import BaggageSelectionController from './BaggageSelectionController';
 import IncludedBaggageBanner from './IncludedBaggageBanner';
@@ -14,7 +14,7 @@ import IncludedBaggageBanner from './IncludedBaggageBanner';
 export default function PassengerBagage({
   passenger,
   index,
-  slice,
+  segment,
   offer,
   t,
   selectedBaggageServices,
@@ -22,7 +22,7 @@ export default function PassengerBagage({
 }: {
   passenger: Passenger;
   index: number;
-  slice: OfferSlice;
+  segment: OfferSliceSegment;
   offer: Offer;
   t: any;
   selectedBaggageServices: SelectedService[];
@@ -30,18 +30,20 @@ export default function PassengerBagage({
     React.SetStateAction<SelectedService[]>
   >;
 }) {
-  const includedBaggage = slice.segments?.[0]?.passengers?.[index]?.baggages;
-  const segmentId = slice.segments?.[0]?.id ?? '';
+  const includedBaggage = segment?.passengers?.[index]?.baggages;
+  const segmentId = segment?.id ?? '';
   const hasIncludedBaggage = includedBaggage?.reduce(
     (sum, bag) => sum + bag.quantity,
     0
   );
+
   const passengerServicesForSegment = offer?.available_services?.filter(
     ({ type, passenger_ids, segment_ids }) =>
       type === 'baggage' &&
       passenger_ids.includes(passenger.id) &&
       segment_ids.includes(segmentId)
   ) as Service[];
+
   return (
     <View style={{ marginBottom: 10 }} key={passenger.id}>
       <Text
