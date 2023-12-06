@@ -331,8 +331,10 @@ function TabView({
   >;
   segments: OfferSliceSegment[];
 }) {
-  const slice = offer.slices?.[index];
-  const segment = segments[index];
+  const segment = segments?.[index];
+  if (!segment) {
+    return <View />;
+  }
   return (
     <View>
       <SegmentBaggageSelection
