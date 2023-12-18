@@ -21,4 +21,6 @@ export default {
   next: 'next',
   back: 'back',
   confirm: 'confirm',
+  seatCardTitle: 'Seat selection',
+  seatCardSubtitle: "Specify where on the plane you'd like to sit",
 };

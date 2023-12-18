@@ -1,7 +1,7 @@
 export default {
   welcome: 'Bienvenue',
   baggageCardTitle: 'Bagage supplémentaire',
-  baggageCardSubtitle: 'Ajouter un bagage supplémentaire',
+  baggageCardSubtitle: 'Ajoutez un bagage supplémentaire',
   noBaggage: 'Aucun bagage supplémentaire disponible pour ce passager',
   flightFrom: 'Vol de',
   to: 'à',
@@ -21,4 +21,6 @@ export default {
   next: 'suivant',
   back: 'retour',
   confirm: 'confirmer',
+  seatCardTitle: 'Choix de siège',
+  seatCardSubtitle: "Choisissez votre siège à l'avance",
 };
