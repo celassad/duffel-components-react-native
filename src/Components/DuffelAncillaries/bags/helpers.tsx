@@ -1,8 +1,5 @@
-import {
-  Offer,
-  OfferSliceSegment,
-  SelectedService,
-} from '../../../duffelTypes';
+import { Offer, OfferSliceSegment } from '../../../duffelTypes';
+import { SelectedService } from '../types';
 
 export function withPlural(quantity: number, singular: string, plural: string) {
   return quantity > 1 ? `${quantity} ${plural}` : `${quantity} ${singular}`;

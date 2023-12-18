@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Icon, Text } from 'react-native-elements';
-import { Offer, Passenger, SelectedService } from '../../../duffelTypes';
+import { Offer, Passenger } from '../../../duffelTypes';
 import i18n from '../../../translation/index';
+import { SelectedService } from '../types';
 import BaggageSelectionModal from './BaggageSelectionModal';
 import { getBagsAddedText, hasBagSelected } from './helpers';
 

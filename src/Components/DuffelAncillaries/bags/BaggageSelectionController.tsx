@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon, Text } from 'react-native-elements';
-import {
-  SelectedService,
-  Service,
-  ServiceMetadata,
-} from '../../../duffelTypes';
+import { Service, ServiceMetadata } from '../../../duffelTypes';
+import { SelectedService } from '../types';
 import { capitalizeFirstLetter } from './helpers';
 
 function getServiceQuantity(

@@ -6,20 +6,6 @@
  */
 import type { AxiosRequestConfig, AxiosResponse } from 'axios';
 import axios from 'axios';
-/**
- * An object containing metadata about the service, like the designator of the seat
- */
-export interface OrderServiceMetadataSeat {
-  designator: string;
-  name: string;
-  disclosures: string[];
-}
-
-export type SelectedService = {
-  service: Service;
-  quantity: number;
-};
-
 export type DuffelApiModelsOrderOrderServiceMetadata =
   | OrderServiceMetadataSeat
   | OrderServiceMetadataBaggage;
@@ -74,6 +60,17 @@ export interface ValidationError {
   loc: ValidationErrorLocItem[];
   msg: string;
   type: string;
+}
+
+export interface UpdateOrderInput {
+  /** Metadata contains a set of key-value pairs that you can attach to an object. It can be useful for storing additional information about the object, in a structured format. Duffel does not use this information. You should not store sensitive information in this field.
+
+The metadata is a collection of key-value pairs, both of which are strings. You can store a maximum of 50 key-value pairs, where each key has a maximum length of 40 characters and each value has a maximum length of 500 characters.
+
+Keys must only contain numbers, letters, dashes, or underscores.
+
+To clear this field, set it to an empty object ({}). */
+  metadata?: RootModelDictAnnotatedStrFieldInfoAnnotationNoneTypeRequiredTrueMetadataMaxLenMaxLength40PydanticGeneralMetadataPatternAZAZ09AnnotatedStrFieldInfoAnnotationNoneTypeRequiredTrueMetadataMaxLenMaxLength500;
 }
 
 export type SortValue = (typeof SortValue)[keyof typeof SortValue];
@@ -154,6 +151,123 @@ export interface Service {
   type: string;
 }
 
+/**
+ * Where the wings of the aircraft are in relation to rows in the cabin.
+
+    The numbers correspond to the indices of the first and the last row which are
+    overwing. You can use this to draw a visual representation of the wings to help
+    users get a better idea of what they will see outside their window.
+
+    The indices are 0th-based and are for all rows, not just those that have seats.
+
+    This is null when no rows of the cabin are overwing.
+    
+ */
+export interface SeatMapCabinWings {
+  first_row_index: number;
+  last_row_index: number;
+}
+
+/**
+ * A seat for a passenger. If the available_services list is empty (which will be
+    represented as an empty list : []), the seat is unavailable.
+
+    For display, all seats should be displayed with the same static width.
+
+    
+ */
+export interface SeatMapCabinRowSectionElementSeatService {
+  id: string;
+  passenger_id: string;
+  total_amount: string;
+  total_currency: string;
+}
+
+export type SeatMapCabinRowSectionElementAvailableServices =
+  | SeatMapCabinRowSectionElementSeatService[]
+  | null;
+
+export type SeatMapCabinRowSectionElementDisclosures = string[] | null;
+
+export type SeatMapCabinRowSectionElementName = string | null;
+
+export type SeatMapCabinRowSectionElementDesignator = string | null;
+
+/**
+ * The element that makes up a section
+ */
+export interface SeatMapCabinRowSectionElement {
+  type: string;
+  designator?: SeatMapCabinRowSectionElementDesignator;
+  name?: SeatMapCabinRowSectionElementName;
+  disclosures?: SeatMapCabinRowSectionElementDisclosures;
+  available_services?: SeatMapCabinRowSectionElementAvailableServices;
+}
+
+/**
+ * Each row is divided into sections by one or more aisles.
+ */
+export interface SeatMapCabinRowSection {
+  elements: SeatMapCabinRowSectionElement[];
+}
+
+/**
+ * Row sections are broken up by aisles. Rows are ordered from front to back of the
+    aircraft.
+    
+ */
+export interface SeatMapCabinRow {
+  sections: SeatMapCabinRowSection[];
+}
+
+export type SeatMapCabinWingsProperty = SeatMapCabinWings | null;
+
+/**
+ * Cabins are ordered by deck from lowest to highest, and then within each deck from
+    the front to back of the aircraft.
+    
+ */
+export interface SeatMapCabin {
+  cabin_class: string;
+  deck: number;
+  wings?: SeatMapCabinWingsProperty;
+  aisles: number;
+  rows: SeatMapCabinRow[];
+}
+
+/**
+ * Seat maps are used to build a rich experience for your customers so they can select
+    a seat as part of an order.
+
+    A seat map includes the data for rendering seats in the relevant cabins, along with
+    their total cost and other information such as disclosures.
+
+    A seat is a special kind of service in that they're not shown when getting an
+    individual offer with return_available_services set to true. They're only available
+    through this endpoint.
+
+    So far we support selecting seats when you create an order. This means we do not
+    support selecting a seat after an order has already been created or cancelling a
+    booked seat.
+
+    Display recommendations
+    =======================
+
+    Each seat, empty, and bassinet element should be displayed with the same static width,
+    while other elements should ideally fill or shrink in the available space in the
+    section. However, displaying them with a static width could also be appropriate.
+
+    If these elements don't fill the whole section, they should be displayed as
+    middle-aligned by default.
+    
+ */
+export interface SeatMap {
+  id: string;
+  slice_id: string;
+  segment_id: string;
+  cabins: SeatMapCabin[];
+}
+
 export interface SearchPlacesNameInput {
   /** A search string for finding matching Places by name */
   name: string;
@@ -179,12 +293,6 @@ export interface SearchInput {
 
 export type SearchAirportInputWithPaginationPagination = PaginationInput | null;
 
-export interface SearchAirportInputWithPagination {
-  pagination?: SearchAirportInputWithPaginationPagination;
-  /** Retrieves a list of Places whose airport/city/country name or IATA code match the provided query or are within a radius of a location */
-  request: SearchAirportInput;
-}
-
 /**
  * The maximum number of records to return per page. Defaults to 50. May be set to any integer between 1 and 200. For more information on how to paginate through records, see the Pagination section.
  */
@@ -197,23 +305,18 @@ export interface SearchAirportInput {
   iata_country_code: string;
 }
 
+export interface SearchAirportInputWithPagination {
+  pagination?: SearchAirportInputWithPaginationPagination;
+  /** Retrieves a list of Places whose airport/city/country name or IATA code match the provided query or are within a radius of a location */
+  request: SearchAirportInput;
+}
+
 export type RootModelUnionPassengerWithAgePassengerWithType =
   | PassengerWithAge
   | PassengerWithType;
 
 export interface RootModelDictAnnotatedStrFieldInfoAnnotationNoneTypeRequiredTrueMetadataMaxLenMaxLength40PydanticGeneralMetadataPatternAZAZ09AnnotatedStrFieldInfoAnnotationNoneTypeRequiredTrueMetadataMaxLenMaxLength500 {
   [key: string]: any;
-}
-
-export interface UpdateOrderInput {
-  /** Metadata contains a set of key-value pairs that you can attach to an object. It can be useful for storing additional information about the object, in a structured format. Duffel does not use this information. You should not store sensitive information in this field.
-
-The metadata is a collection of key-value pairs, both of which are strings. You can store a maximum of 50 key-value pairs, where each key has a maximum length of 40 characters and each value has a maximum length of 500 characters.
-
-Keys must only contain numbers, letters, dashes, or underscores.
-
-To clear this field, set it to an empty object ({}). */
-  metadata?: RootModelDictAnnotatedStrFieldInfoAnnotationNoneTypeRequiredTrueMetadataMaxLenMaxLength40PydanticGeneralMetadataPatternAZAZ09AnnotatedStrFieldInfoAnnotationNoneTypeRequiredTrueMetadataMaxLenMaxLength500;
 }
 
 export type RefundNetCurrency = string | null;
@@ -248,6 +351,8 @@ export interface ProgrammeAccount {
   airline_iata_code: string;
 }
 
+export type Places = Place[];
+
 export type PlaceAirports = Airport[] | null;
 
 export type PlaceCity = City | null;
@@ -281,10 +386,6 @@ export interface Place {
   city?: PlaceCity;
   airports?: PlaceAirports;
 }
-
-export type Places = Place[];
-
-export type Payments = Payment[];
 
 export type PaymentType = (typeof PaymentType)[keyof typeof PaymentType];
 
@@ -361,6 +462,8 @@ export interface Payment {
   /** The type of payment you want to apply to the order. If you are an IATA agent with your own agreements with airlines, in some cases, you can pay using ARC/BSP cash by specifying arc_bsp_cash. Otherwise, you must pay using your Duffel account's balance by specifying balance. In test mode, your balance is unlimited. If you're not sure which of these options applies to you, get in touch with the Duffel support team at help@duffel.com. */
   type: PaymentType;
 }
+
+export type Payments = Payment[];
 
 /**
  * The loyalty programme accounts for this passenger
@@ -692,6 +795,15 @@ export interface OrderSlice {
 }
 
 export type OrderServices = _TypesDuffelApiCreateOrderInputOrderService[];
+
+/**
+ * An object containing metadata about the service, like the designator of the seat
+ */
+export interface OrderServiceMetadataSeat {
+  designator: string;
+  name: string;
+  disclosures: string[];
+}
 
 export type OrderServiceMetadataBaggageMaximumDepthCm = number | null;
 
@@ -1446,14 +1558,14 @@ export const flightCreatePartialOfferRequests = <
 };
 
 /**
- * Retrieves a partial offers request by its ID, only including partial offers for the current slice of 
+ * Retrieves a partial offers request by its ID, only including partial offers for the current slice of
 multi-step search flow.
-In order to view partial offers for the second slice of the itinerary, you need to provide the selected 
-partial offer ID from the results of creating a partial offer request (which is considered the first 
+In order to view partial offers for the second slice of the itinerary, you need to provide the selected
+partial offer ID from the results of creating a partial offer request (which is considered the first
 slice of the journey).
 
-For a multi-city search you might need to provide more than one selected partial offer ID. For example, 
-when retrieving partial offers for the third slice, you need to provide selected partial offer IDs of two 
+For a multi-city search you might need to provide more than one selected partial offer ID. For example,
+when retrieving partial offers for the third slice, you need to provide selected partial offer IDs of two
 previous slices.
  * @summary Get Partial Offer Requests
  */
@@ -1471,14 +1583,14 @@ export const flightGetPartialOfferRequests = <
 };
 
 /**
- * Retrieves a partial offers request by its ID, only including partial offers for the current slice of 
+ * Retrieves a partial offers request by its ID, only including partial offers for the current slice of
 multi-step search flow.
-In order to view partial offers for the second slice of the itinerary, you need to provide the selected 
-partial offer ID from the results of creating a partial offer request (which is considered the first 
+In order to view partial offers for the second slice of the itinerary, you need to provide the selected
+partial offer ID from the results of creating a partial offer request (which is considered the first
 slice of the journey).
 
-For a multi-city search you might need to provide more than one selected partial offer ID. For example, 
-when retrieving partial offers for the third slice, you need to provide selected partial offer IDs of two 
+For a multi-city search you might need to provide more than one selected partial offer ID. For example,
+when retrieving partial offers for the third slice, you need to provide selected partial offer IDs of two
 previous slices.
  * @summary Get Partial Offer Requests Fares
  */
@@ -1661,6 +1773,16 @@ export const flightGetOrder = <TData = AxiosResponse<Order>,>(
 };
 
 /**
+ * @summary Seat Maps
+ */
+export const flightSeatMaps = <TData = AxiosResponse<SeatMap[]>,>(
+  offerId: string,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.post(`/flight/seat-maps/${offerId}`, undefined, options);
+};
+
+/**
  * @summary Root
  */
 export const systemRoot = <TData = AxiosResponse<unknown>,>(
@@ -1694,5 +1816,6 @@ export type FlightListPlacesResult = AxiosResponse<Places>;
 export type FlightListAirportsResult = AxiosResponse<PaginatedResultAirport>;
 export type FlightListOrdersResult = AxiosResponse<PaginatedResultOrder>;
 export type FlightGetOrderResult = AxiosResponse<Order>;
+export type FlightSeatMapsResult = AxiosResponse<SeatMap[]>;
 export type SystemRootResult = AxiosResponse<unknown>;
 export type SystemHealthCheckResult = AxiosResponse<unknown>;

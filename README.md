@@ -18,7 +18,8 @@ npm install duffel-components-react-native
 
 ```js
 import { BaggageSelectionCard } from 'duffel-components-react-native';
-import { SelectedService, Offer, Passenger } from 'duffel-components-react-native/lib/typescript/src/duffelTypes';
+import { Offer, Passenger } from 'duffel-components-react-native/lib/typescript/src/duffelTypes';
+import { SelectedService} from 'duffel-components-react-native/lib/typescript/src/types';
 ```
 
 ```js

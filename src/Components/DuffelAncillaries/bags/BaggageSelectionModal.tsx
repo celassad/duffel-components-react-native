@@ -8,12 +8,8 @@ import {
   View,
 } from 'react-native';
 import { Button, Icon, Text } from 'react-native-elements';
-import {
-  Offer,
-  OfferSliceSegment,
-  Passenger,
-  SelectedService,
-} from '../../../duffelTypes';
+import { Offer, OfferSliceSegment, Passenger } from '../../../duffelTypes';
+import { SelectedService } from '../types';
 import { capitalizeFirstLetter, getSegmentList, withPlural } from './helpers';
 import PassengerBagage from './PassengerBaggage';
 

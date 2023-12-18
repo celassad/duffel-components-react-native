@@ -5,9 +5,9 @@ import {
   Offer,
   OfferSliceSegment,
   Passenger,
-  SelectedService,
   Service,
 } from '../../../duffelTypes';
+import { SelectedService } from '../types';
 import BaggageSelectionController from './BaggageSelectionController';
 import IncludedBaggageBanner from './IncludedBaggageBanner';
 
