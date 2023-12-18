@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Modal,
   ScrollView,
@@ -8,7 +8,10 @@ import {
   View,
 } from 'react-native';
 import { Text } from 'react-native-elements';
-import { Offer, Passenger } from '../../../duffelTypes';
+import { Offer, OfferSliceSegment, Passenger } from '../../../duffelTypes';
+import TabFooter from '../../CommonComponents/TabFooter';
+import TabHeader from '../../CommonComponents/TabHeader';
+import { capitalizeFirstLetter, getSegmentList, withPlural } from '../../tools';
 
 export default function SeatSelectionModal({
   handleModal,
@@ -23,7 +26,6 @@ export default function SeatSelectionModal({
   passengers: Passenger[];
   t: any;
 }) {
-  console.log(passengers?.length, offer.id, t('Welcome'));
   return (
     <Modal
       animationType="slide"
@@ -45,7 +47,12 @@ export default function SeatSelectionModal({
                 style={{ paddingBottom: 10 }}
                 keyboardShouldPersistTaps="always"
               >
-                <Text>test</Text>
+                <SeatSelectionView
+                  t={t}
+                  offer={offer}
+                  passengers={passengers}
+                  handleModal={handleModal}
+                />
               </ScrollView>
             </View>
           </TouchableWithoutFeedback>
@@ -55,9 +62,128 @@ export default function SeatSelectionModal({
   );
 }
 
+function SeatSelectionView({
+  offer,
+  passengers,
+  t,
+  handleModal,
+}: {
+  offer: Offer;
+  passengers: Passenger[];
+  t: any;
+  handleModal: () => void;
+}) {
+  const [index, setIndex] = useState(0);
+  const segments = getSegmentList(offer);
+  const nbTabs = segments?.length ?? 0;
+  const totalPrice = '0';
+  const totalBags = 0;
+
+  return (
+    <View>
+      <TabHeader nbTabs={nbTabs} index={index} setIndex={setIndex} />
+      <TabView
+        index={index}
+        offer={offer}
+        segments={segments}
+        passengers={passengers}
+        t={t}
+      />
+      <TotalPrice price={totalPrice} nbBags={totalBags} t={t} />
+      <TabFooter
+        index={index}
+        setIndex={setIndex}
+        t={t}
+        handleModal={handleModal}
+        nbTabs={nbTabs}
+      />
+    </View>
+  );
+}
+
+function TabView({
+  offer,
+  passengers,
+  t,
+  index,
+  segments,
+}: {
+  offer: Offer;
+  passengers: Passenger[];
+  t: any;
+  index: number;
+  segments: OfferSliceSegment[];
+}) {
+  const segment = segments?.[index];
+  if (!segment) {
+    return <View />;
+  }
+  return (
+    <View>
+      <SegmentSeatSelection
+        offer={offer}
+        segment={segment}
+        passengers={passengers}
+        t={t}
+      />
+    </View>
+  );
+}
+
+function TotalPrice({
+  price,
+  nbBags,
+  t,
+}: {
+  price: string;
+  nbBags: number;
+  t: any;
+}) {
+  const text = capitalizeFirstLetter(
+    `${t('priceFor')} ${withPlural(nbBags, `${t('seat')}`, `${t('seats')}`)}`
+  );
+  return (
+    <>
+      <View style={styles.dividerStyle} />
+      <View style={styles.totalPriceViewStyle}>
+        <Text style={styles.priceLabel}>{text}</Text>
+        <Text style={styles.priceText}>{price}</Text>
+      </View>
+    </>
+  );
+}
+
+function SegmentSeatSelection({
+  offer,
+  segment,
+  passengers,
+  t,
+}: {
+  offer: Offer;
+  segment: OfferSliceSegment;
+  passengers: Passenger[];
+  t: any;
+}) {
+  const title = `${t('flightFrom')} ${segment.origin.iata_code} ${t('to')} ${
+    segment.destination.iata_code
+  }`;
+  console.log(passengers?.length, offer?.id);
+  return (
+    <View>
+      <Text style={styles.sliceTitle}>{title}</Text>
+      <Text>test</Text>
+    </View>
+  );
+}
+
 const BORDER_RADIUS = 20;
 
 const styles = StyleSheet.create({
+  dividerStyle: {
+    backgroundColor: 'lightgrey',
+    height: 1,
+    width: '100%',
+  },
   priceText: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -70,33 +196,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginVertical: 10,
     alignItems: 'center',
-  },
-  secondaryButtonTitleStyle: {
-    textTransform: 'capitalize',
-    color: 'black',
-  },
-  secondaryButtonStyle: {
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 5,
-  },
-  primaryButtonTitleStyle: {
-    textTransform: 'capitalize',
-    color: 'white',
-  },
-  primaryButtonStyle: {
-    backgroundColor: 'black',
-    borderWidth: 1,
-    borderColor: 'white',
-    borderRadius: 5,
-  },
-  buttonContainerStyle: {
-    flex: 1,
-    margin: 5,
-  },
-  buttonTitle: {
-    textTransform: 'capitalize',
   },
   overlayStyle: {
     backgroundColor: 'white',

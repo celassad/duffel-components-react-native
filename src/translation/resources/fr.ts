@@ -21,6 +21,8 @@ export default {
   next: 'suivant',
   back: 'retour',
   confirm: 'confirmer',
-  seatCardTitle: 'Choix de siège',
+  seatCardTitle: 'Choix de sièges',
   seatCardSubtitle: "Choisissez votre siège à l'avance",
+  seat: 'siège',
+  seats: 'sièges',
 };

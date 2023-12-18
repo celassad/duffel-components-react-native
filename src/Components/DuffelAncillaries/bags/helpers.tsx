@@ -1,14 +1,5 @@
-import { Offer, OfferSliceSegment } from '../../../duffelTypes';
+import { withPlural } from '../../tools';
 import { SelectedService } from '../types';
-
-export function withPlural(quantity: number, singular: string, plural: string) {
-  return quantity > 1 ? `${quantity} ${plural}` : `${quantity} ${singular}`;
-}
-
-export function capitalizeFirstLetter(str: string) {
-  const str2 = str.charAt(0).toUpperCase() + str.slice(1);
-  return str2;
-}
 
 export function getBagsAddedText(services: SelectedService[], t: any) {
   if (!services || services?.length === 0) {
@@ -33,9 +24,3 @@ export function getBagsAddedText(services: SelectedService[], t: any) {
 export function hasBagSelected(services: SelectedService[]) {
   return services?.length > 0;
 }
-
-export const getSegmentList = (offer: Offer) =>
-  offer.slices.reduce(
-    (accumulator, slice) => [...accumulator, ...slice.segments],
-    new Array<OfferSliceSegment>()
-  );

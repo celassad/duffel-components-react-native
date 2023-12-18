@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Offer, Passenger } from '../../duffelTypes';
+import { Offer, Passenger, SeatMap } from '../../duffelTypes';
 import BaggageSelectionCard from './bags/BaggageSelectionCard';
 import SeatSelectionCard from './seats/SeatSelectionCard';
 import { SelectedService } from './types';
@@ -13,7 +13,7 @@ type DuffelAncillariesProps = {
   setSelectedBaggageServices: React.Dispatch<
     React.SetStateAction<SelectedService[]>
   >;
-  seatMaps: any[] | undefined;
+  seatMaps: SeatMap[] | undefined;
 };
 
 export default function DuffelAncillaries(props: DuffelAncillariesProps) {
@@ -26,6 +26,7 @@ export default function DuffelAncillaries(props: DuffelAncillariesProps) {
         selectedBaggageServices={props.selectedBaggageServices}
         setSelectedBaggageServices={props.setSelectedBaggageServices}
       />
+      <View style={{ height: 12 }} />
       <SeatSelectionCard
         lng={props.lng}
         offer={props.offer}

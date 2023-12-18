@@ -23,4 +23,6 @@ export default {
   confirm: 'confirm',
   seatCardTitle: 'Seat selection',
   seatCardSubtitle: "Specify where on the plane you'd like to sit",
+  seat: 'seat',
+  seats: 'seats',
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Icon, Text } from 'react-native-elements';
 import { Offer, Passenger } from '../../../duffelTypes';
 import i18n from '../../../translation';
 import SeatSelectionModal from './SeatSelectionModal';
@@ -30,7 +30,8 @@ export default function SeatSelectionCard(props: SeatSelectionCardProps) {
     <>
       <TouchableOpacity style={styles.container} onPress={showModal}>
         <Icon
-          name={seatSelected ? 'check-circle' : 'luggage'}
+          name={seatSelected ? 'check-circle' : 'seat-passenger'}
+          type="material-community"
           style={styles.iconStyle}
         />
         <View>

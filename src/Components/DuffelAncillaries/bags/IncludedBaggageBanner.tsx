@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-elements';
 import { OfferSliceSegmentPassengerBaggage } from '../../../duffelTypes';
-import { withPlural } from './helpers';
+import { withPlural } from '../../tools';
 
 export default function IncludedBaggageBanner({
   includedBaggage,
