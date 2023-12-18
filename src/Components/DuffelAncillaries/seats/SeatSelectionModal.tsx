@@ -75,7 +75,7 @@ function SeatSelectionView({
 }) {
   const [index, setIndex] = useState(0);
   const segments = getSegmentList(offer);
-  const nbTabs = segments?.length ?? 0;
+  const nbTabs = segments?.length * passengers?.length ?? 0;
   const totalPrice = '0';
   const totalBags = 0;
 
@@ -114,8 +114,12 @@ function TabView({
   index: number;
   segments: OfferSliceSegment[];
 }) {
-  const segment = segments?.[index];
-  if (!segment) {
+  const nbPassengers = passengers?.length;
+  const segmentIndex = Math.floor(index / nbPassengers);
+  const passengerIndex = index % nbPassengers;
+  const segment = segments?.[segmentIndex];
+  const passenger = passengers?.[passengerIndex];
+  if (!segment || !passenger) {
     return <View />;
   }
   return (
@@ -123,7 +127,7 @@ function TabView({
       <SegmentSeatSelection
         offer={offer}
         segment={segment}
-        passengers={passengers}
+        passenger={passenger}
         t={t}
       />
     </View>
@@ -156,22 +160,24 @@ function TotalPrice({
 function SegmentSeatSelection({
   offer,
   segment,
-  passengers,
+  passenger,
   t,
 }: {
   offer: Offer;
   segment: OfferSliceSegment;
-  passengers: Passenger[];
+  passenger: Passenger;
   t: any;
 }) {
   const title = `${t('flightFrom')} ${segment.origin.iata_code} ${t('to')} ${
     segment.destination.iata_code
   }`;
-  console.log(passengers?.length, offer?.id);
+  console.log(offer.id);
   return (
     <View>
       <Text style={styles.sliceTitle}>{title}</Text>
-      <Text>test</Text>
+      <Text
+        style={styles.passengerName}
+      >{`${passenger.given_name} ${passenger.family_name}`}</Text>
     </View>
   );
 }
@@ -179,6 +185,12 @@ function SegmentSeatSelection({
 const BORDER_RADIUS = 20;
 
 const styles = StyleSheet.create({
+  passengerName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'grey',
+    marginBottom: 20,
+  },
   dividerStyle: {
     backgroundColor: 'lightgrey',
     height: 1,
@@ -213,6 +225,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'hsl(203, 14%, 23%)',
     fontSize: 18,
-    marginBottom: 20,
+    marginBottom: 5,
   },
 });

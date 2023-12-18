@@ -1,6 +1,6 @@
 {
   "name": "duffel-components-react-native",
-  "version": "0.1.19",
+  "version": "0.2.0",
   "description": "A react-native component library for Duffel components",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
