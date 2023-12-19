@@ -44,6 +44,7 @@ export default function SeatSelectionCard(props: SeatSelectionCardProps) {
         passengers={props.passengers}
         handleModal={handleModal}
         visible={visible}
+        seatMaps={props.seatMaps}
         t={t}
       />
     </>
