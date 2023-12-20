@@ -1,6 +1,13 @@
-import { SeatMapCabinRowSectionElementAmenity } from "duffel-components-react-native/src/Components/DuffelAncillaries/types";
-import { SeatMap, SeatMapCabin, SeatMapCabinRow, SeatMapCabinRowSectionElement } from "duffel-components-react-native/src/duffelTypes";
+import {
+  SeatMap,
+  SeatMapCabin,
+  SeatMapCabinRow,
+  SeatMapCabinRowSectionElement,
+} from '../../../duffelTypes';
+import { SeatMapCabinRowSectionElementAmenity } from '../types';
 
+export const MARGIN = 1;
+export const ELEMENT_BORDER_WIDTH = 1;
 
 export const getCabinsForSegmentAndDeck = (forDeck: number, seatMap: SeatMap) =>
   seatMap.cabins.filter((cabin) => cabin.deck === forDeck);
@@ -13,7 +20,7 @@ export const getSymbols = (
     for (const row of cabin.rows) {
       for (const section of row.sections) {
         for (const element of section.elements) {
-          if (element.type !== "seat" && element.type !== "empty") {
+          if (element.type !== 'seat' && element.type !== 'empty') {
             results.add(element.type);
           }
         }
@@ -23,12 +30,14 @@ export const getSymbols = (
   return results;
 };
 
-export const getRowNumber = (row: SeatMapCabinRow): string | null | undefined => {
+export const getRowNumber = (
+  row: SeatMapCabinRow
+): string | null | undefined => {
   const seats = Object.values(row.sections)
     .map((section) => section.elements)
     .reduce((acc, val) => acc.concat(val), [])
     .filter(
-      (element) => element.type === "seat"
+      (element) => element.type === 'seat'
     ) as SeatMapCabinRowSectionElement[];
 
   return seats.length > 0
