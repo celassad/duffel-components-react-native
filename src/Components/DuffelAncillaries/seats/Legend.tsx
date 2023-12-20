@@ -1,32 +1,47 @@
-import { colors } from 'duffel-components-react-native/src/colors';
-import { SeatAmenityIcon } from 'duffel-components-react-native/src/Components/CommonComponents/Icons';
 import React from 'react';
-import { View } from "react-native";
+import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-elements';
+import { colors } from '../../../colors';
+import { parseAmenity, SeatAmenityIcon } from '../../CommonComponents/Icons';
 
-export default function Legend({symbols}:{symbols: Set<string>}){
-
-    return(
-        <View style={{flexDirection:'row', flexWrap:'wrap', paddingVertical:12}}>
-
-            {[...symbols].map((s)=>{
-                return <Amenity symbol={s}/>
-                }
-            )}
-
-        </View>
-    )
+export default function Legend({ symbols }: { symbols: Set<string> }) {
+  return (
+    <View style={styles.legendView}>
+      {[...symbols].map((s) => {
+        return <Amenity symbol={s} />;
+      })}
+    </View>
+  );
 }
 
-function Amenity({symbol}:{symbol: string}){
-    const amenity = symbol.split('_')[0]
-    return(
-        <>
-        <View style={{flexDirection:'row', alignItems:'center'}}>
-            <SeatAmenityIcon amenity={amenity} style={{padding:6}}/>
-            <Text style={{color: colors.AMENITY_COLOR}}>{amenity}</Text>
-        </View>
-        <View style={{width:8}}/>
-        </>
-    )
+function Amenity({ symbol }: { symbol: string }) {
+  const name = parseAmenity(symbol.split('_')[0] as string);
+  if (!name) {
+    console.log('Amenity Icon not found for : ', symbol);
+    return <View />;
+  }
+  return (
+    <>
+      <View style={styles.AmenityView}>
+        <SeatAmenityIcon amenity={name} style={{ padding: 6 }} />
+        <Text style={{ color: colors.AMENITY_COLOR }}>{name}</Text>
+      </View>
+      <View style={styles.space} />
+    </>
+  );
 }
+
+const styles = StyleSheet.create({
+  space: {
+    width: 8,
+  },
+  AmenityView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  legendView: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingVertical: 12,
+  },
+});

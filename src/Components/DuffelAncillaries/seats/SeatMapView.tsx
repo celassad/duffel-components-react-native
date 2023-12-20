@@ -35,11 +35,11 @@ export default function SeatMapView({
   t: any;
   seatMap: SeatMap;
 }) {
-  const [selectedDeck, setSelectedDeck] = React.useState(0);
+  //   const [selectedDeck, setSelectedDeck] = React.useState(0);
   if (!seatMap || !seatMap.cabins || !seatMap.cabins.length)
     return <SeatMapUnavailable />;
 
-  const cabins = getCabinsForSegmentAndDeck(selectedDeck, seatMap);
+  const cabins = getCabinsForSegmentAndDeck(0, seatMap);
   //   const hasMultipleDecks = cabins.length !== seatMap.cabins.length;
   //   const anyHasWings = seatMap.cabins.some((cabin) => cabin.wings);
 

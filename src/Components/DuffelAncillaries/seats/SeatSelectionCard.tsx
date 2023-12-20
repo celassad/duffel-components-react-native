@@ -26,6 +26,13 @@ export default function SeatSelectionCard(props: SeatSelectionCardProps) {
 
   const subtitle = t('seatCardSubtitle');
   const seatSelected = false;
+  if (!props.seatMaps) {
+    return (
+      <View>
+        <Text>seatmaps undefined</Text>
+      </View>
+    );
+  }
   return (
     <>
       <TouchableOpacity style={styles.container} onPress={showModal}>
