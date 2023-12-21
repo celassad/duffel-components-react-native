@@ -31,11 +31,11 @@ type SeatAmenityIconProps = { amenity: AmenityType } & Optional<
 export function SeatAmenityIcon({ amenity, ...props }: SeatAmenityIconProps) {
   return (
     <Icon
-      {...props}
       size={16}
-      color={colors.AMENITY_COLOR}
       name={AmenityIcon[amenity].name}
       type={AmenityIcon[amenity].type}
+      color={colors.AMENITY_COLOR}
+      {...props}
     />
   );
 }

@@ -1,36 +1,38 @@
+import AvailableSeat from 'duffel-components-react-native/src/Components/DuffelAncillaries/seats/AvailableSeat';
+import SeatElementUnavailable from 'duffel-components-react-native/src/Components/DuffelAncillaries/seats/SeatElementUnavailable';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { colors } from '../../../colors';
 import { SeatMapCabinRowSectionElement } from '../../../duffelTypes';
-import { ELEMENT_BORDER_WIDTH, MARGIN } from './helpers';
 
-export default function SeatElement({
+const SeatElement = (({
   element,
   width,
+  currentPassengerId
 }: {
   element: SeatMapCabinRowSectionElement;
   width: number;
-}) {
-  console.log('seat element', element.type);
+  currentPassengerId: string
+}) => {
+  // console.log('seat element', element.type);
+
+  const seatServiceFromElement = element?.available_services?.find(
+    (service) => service.passenger_id === currentPassengerId
+  );
+
+  if(!seatServiceFromElement)return(
+    <SeatElementUnavailable width={width}/>
+  )
+
+  const seatLabel = element?.designator?.charAt(element.designator.length - 1) ?? '';
+  const isFeePayable = !isNaN(+seatServiceFromElement?.total_amount) && +seatServiceFromElement?.total_amount !== 0;
+  
   return (
-    <View
-      style={[
-        {
-          width: width,
-          height: width,
-        },
-        styles.ViewStyle,
-      ]}
+    <AvailableSeat
+      width={width}
+      seatLabel={seatLabel}
+      isFeePayable={isFeePayable}
+      selected={false}
     />
   );
-}
+})
 
-const styles = StyleSheet.create({
-  ViewStyle: {
-    backgroundColor: colors.SEAT_BACKGROUND,
-    margin: MARGIN,
-    borderColor: colors.SEAT_OUTLINE,
-    borderRadius: 4,
-    borderWidth: ELEMENT_BORDER_WIDTH,
-  },
-});
+export default SeatElement

@@ -1,3 +1,5 @@
+import AvailableSeat from 'duffel-components-react-native/src/Components/DuffelAncillaries/seats/AvailableSeat';
+import SeatElementUnavailable from 'duffel-components-react-native/src/Components/DuffelAncillaries/seats/SeatElementUnavailable';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-elements';
@@ -7,11 +9,58 @@ import { parseAmenity, SeatAmenityIcon } from '../../CommonComponents/Icons';
 export default function Legend({ symbols }: { symbols: Set<string> }) {
   return (
     <View style={styles.legendView}>
+      <SeatLegend/>
       {[...symbols].map((s) => {
-        return <Amenity symbol={s} />;
+        return <Amenity key={s} symbol={s} />;
       })}
     </View>
   );
+}
+
+function SeatLegend(){
+  return(
+    <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+
+      <View style={styles.SeatView}>
+          <AvailableSeat
+            width={20}
+            seatLabel={""}
+            isFeePayable={true}
+            selected={false}
+          />
+        <Text style={styles.seatText}>Additional cost</Text>
+      </View>
+
+      <View style={styles.SeatView}>
+        <AvailableSeat
+          width={20}
+          seatLabel={""}
+          isFeePayable={false}
+                      selected={false}
+
+        />
+      <Text style={styles.seatText}>Included</Text>
+      </View>
+
+      <View style={styles.SeatView}>
+        <AvailableSeat
+          width={20}
+          seatLabel={""}
+          isFeePayable={false}
+          selected={true}
+        />
+      <Text style={styles.seatText}>Selected</Text>
+      </View>
+
+      <View style={styles.SeatView}>
+        <SeatElementUnavailable
+          width={20}
+        />
+      <Text style={styles.seatText}>Unavailable</Text>
+      </View>
+
+    </View>
+  )
 }
 
 function Amenity({ symbol }: { symbol: string }) {
@@ -32,6 +81,10 @@ function Amenity({ symbol }: { symbol: string }) {
 }
 
 const styles = StyleSheet.create({
+  seatText: {
+    color: colors.AMENITY_COLOR,
+    paddingLeft:2,
+  },
   space: {
     width: 8,
   },
@@ -42,6 +95,12 @@ const styles = StyleSheet.create({
   legendView: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingVertical: 12,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  SeatView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight:6
   },
 });

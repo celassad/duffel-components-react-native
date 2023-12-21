@@ -1,25 +1,22 @@
 import React, { useState } from 'react';
 import {
-  Modal,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+  Modal, StyleSheet, TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  View
 } from 'react-native';
 import { Text } from 'react-native-elements';
 import {
   Offer,
   OfferSliceSegment,
   Passenger,
-  SeatMap,
+  SeatMap
 } from '../../../duffelTypes';
 import TabFooter from '../../CommonComponents/TabFooter';
 import TabHeader from '../../CommonComponents/TabHeader';
 import { capitalizeFirstLetter, getSegmentList, withPlural } from '../../tools';
 import SeatMapView from './SeatMapView';
 
-const MODAL_PADDING = 30;
+const MODAL_PADDING = 20;
 
 export default function SeatSelectionModal({
   handleModal,
@@ -89,6 +86,7 @@ function SeatSelectionView({
 
   return (
     <View>
+
       <TabHeader nbTabs={nbTabs} index={index} setIndex={setIndex} />
       <TabView
         key={index}
@@ -100,7 +98,7 @@ function SeatSelectionView({
         t={t}
       />
       <TotalPrice price={totalPrice} nbBags={totalBags} t={t} />
-      <TabFooter
+          <TabFooter
         index={index}
         setIndex={setIndex}
         t={t}
@@ -135,9 +133,19 @@ function TabView({
   if (!segment || !passenger || !seatMap) {
     return <View />;
   }
+  return(
+    <SegmentSeatSelection
+          key={segment.id}
+          offer={offer}
+          segment={segment}
+          seatMap={seatMap}
+          passenger={passenger}
+          t={t}
+        />
+  )
   return (
-    <ScrollView style={{ maxHeight: '80%' }}>
-      <TouchableOpacity activeOpacity={1}>
+    <View style={{}}>
+      {/* <TouchableOpacity activeOpacity={1}> */}
         <SegmentSeatSelection
           key={segment.id}
           offer={offer}
@@ -146,8 +154,8 @@ function TabView({
           passenger={passenger}
           t={t}
         />
-      </TouchableOpacity>
-    </ScrollView>
+      {/* </TouchableOpacity> */}
+    </View>
   );
 }
 
@@ -191,7 +199,7 @@ function SegmentSeatSelection({
     segment.destination.iata_code
   }`;
   return (
-    <View>
+    <View style={{height:"80%"}}>
       <Text style={styles.sliceTitle}>{title}</Text>
       <Text
         style={styles.passengerName}
@@ -214,7 +222,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: 'grey',
-    marginBottom: 20,
   },
   dividerStyle: {
     backgroundColor: 'lightgrey',

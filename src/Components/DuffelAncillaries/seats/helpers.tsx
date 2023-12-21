@@ -2,11 +2,11 @@ import {
   SeatMap,
   SeatMapCabin,
   SeatMapCabinRow,
-  SeatMapCabinRowSectionElement,
+  SeatMapCabinRowSectionElement
 } from '../../../duffelTypes';
 import { SeatMapCabinRowSectionElementAmenity } from '../types';
 
-export const MARGIN = 1;
+export const MARGIN = 3;
 export const ELEMENT_BORDER_WIDTH = 1;
 
 export const getCabinsForSegmentAndDeck = (forDeck: number, seatMap: SeatMap) =>
