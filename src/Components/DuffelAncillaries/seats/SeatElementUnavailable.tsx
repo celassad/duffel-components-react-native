@@ -4,8 +4,8 @@ import { Icon } from 'react-native-elements';
 import { colors } from '../../../colors';
 import { ELEMENT_BORDER_WIDTH, MARGIN } from './helpers';
 
-export default function SeatElementUnavailable({width}:{width: number}){
-  return(
+export default function SeatElementUnavailable({ width }: { width: number }) {
+  return (
     <View
       style={[
         {
@@ -15,9 +15,9 @@ export default function SeatElementUnavailable({width}:{width: number}){
         styles.UnavailableSeatStyle,
       ]}
     >
-      <Icon name='close' size={12} color={colors.UNAVAILABLE_SEAT_CONTENT}/>
+      <Icon name="close" size={12} color={colors.UNAVAILABLE_SEAT_CONTENT} />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -27,6 +27,6 @@ const styles = StyleSheet.create({
     borderColor: colors.UNAVAILABLE_SEAT_OUTLINE,
     borderRadius: 4,
     borderWidth: ELEMENT_BORDER_WIDTH,
-    justifyContent:'center'
+    justifyContent: 'center',
   },
 });

@@ -1,16 +1,16 @@
-import AvailableSeat from 'duffel-components-react-native/src/Components/DuffelAncillaries/seats/AvailableSeat';
-import SeatElementUnavailable from 'duffel-components-react-native/src/Components/DuffelAncillaries/seats/SeatElementUnavailable';
 import React from 'react';
 import { SeatMapCabinRowSectionElement } from '../../../duffelTypes';
+import AvailableSeat from './AvailableSeat';
+import SeatElementUnavailable from './SeatElementUnavailable';
 
-const SeatElement = (({
+const SeatElement = ({
   element,
   width,
-  currentPassengerId
+  currentPassengerId,
 }: {
   element: SeatMapCabinRowSectionElement;
   width: number;
-  currentPassengerId: string
+  currentPassengerId: string;
 }) => {
   // console.log('seat element', element.type);
 
@@ -18,13 +18,14 @@ const SeatElement = (({
     (service) => service.passenger_id === currentPassengerId
   );
 
-  if(!seatServiceFromElement)return(
-    <SeatElementUnavailable width={width}/>
-  )
+  if (!seatServiceFromElement) return <SeatElementUnavailable width={width} />;
 
-  const seatLabel = element?.designator?.charAt(element.designator.length - 1) ?? '';
-  const isFeePayable = !isNaN(+seatServiceFromElement?.total_amount) && +seatServiceFromElement?.total_amount !== 0;
-  
+  const seatLabel =
+    element?.designator?.charAt(element.designator.length - 1) ?? '';
+  const isFeePayable =
+    !isNaN(+seatServiceFromElement?.total_amount) &&
+    +seatServiceFromElement?.total_amount !== 0;
+
   return (
     <AvailableSeat
       width={width}
@@ -33,6 +34,6 @@ const SeatElement = (({
       selected={false}
     />
   );
-})
+};
 
-export default SeatElement
+export default SeatElement;

@@ -2,7 +2,7 @@ import {
   SeatMap,
   SeatMapCabin,
   SeatMapCabinRow,
-  SeatMapCabinRowSectionElement
+  SeatMapCabinRowSectionElement,
 } from '../../../duffelTypes';
 import { SeatMapCabinRowSectionElementAmenity } from '../types';
 

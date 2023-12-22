@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import {
-  Modal, StyleSheet, TouchableOpacity,
+  Modal,
+  StyleSheet,
+  TouchableOpacity,
   TouchableWithoutFeedback,
-  View
+  View,
 } from 'react-native';
 import { Text } from 'react-native-elements';
 import {
   Offer,
   OfferSliceSegment,
   Passenger,
-  SeatMap
+  SeatMap,
 } from '../../../duffelTypes';
 import TabFooter from '../../CommonComponents/TabFooter';
 import TabHeader from '../../CommonComponents/TabHeader';
@@ -86,7 +88,6 @@ function SeatSelectionView({
 
   return (
     <View>
-
       <TabHeader nbTabs={nbTabs} index={index} setIndex={setIndex} />
       <TabView
         key={index}
@@ -98,7 +99,7 @@ function SeatSelectionView({
         t={t}
       />
       <TotalPrice price={totalPrice} nbBags={totalBags} t={t} />
-          <TabFooter
+      <TabFooter
         index={index}
         setIndex={setIndex}
         t={t}
@@ -133,29 +134,15 @@ function TabView({
   if (!segment || !passenger || !seatMap) {
     return <View />;
   }
-  return(
-    <SegmentSeatSelection
-          key={segment.id}
-          offer={offer}
-          segment={segment}
-          seatMap={seatMap}
-          passenger={passenger}
-          t={t}
-        />
-  )
   return (
-    <View style={{}}>
-      {/* <TouchableOpacity activeOpacity={1}> */}
-        <SegmentSeatSelection
-          key={segment.id}
-          offer={offer}
-          segment={segment}
-          seatMap={seatMap}
-          passenger={passenger}
-          t={t}
-        />
-      {/* </TouchableOpacity> */}
-    </View>
+    <SegmentSeatSelection
+      key={segment.id}
+      offer={offer}
+      segment={segment}
+      seatMap={seatMap}
+      passenger={passenger}
+      t={t}
+    />
   );
 }
 
@@ -199,7 +186,7 @@ function SegmentSeatSelection({
     segment.destination.iata_code
   }`;
   return (
-    <View style={{height:"80%"}}>
+    <View style={styles.SeatSelectionView}>
       <Text style={styles.sliceTitle}>{title}</Text>
       <Text
         style={styles.passengerName}
@@ -218,6 +205,9 @@ function SegmentSeatSelection({
 const BORDER_RADIUS = 20;
 
 const styles = StyleSheet.create({
+  SeatSelectionView: {
+    height: '80%',
+  },
   passengerName: {
     fontSize: 18,
     fontWeight: 'bold',

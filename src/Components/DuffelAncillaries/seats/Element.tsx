@@ -11,7 +11,7 @@ const Element = ({
   elementIndex,
   currentPassengerId,
   width,
-  isUnique
+  isUnique,
 }: {
   element: SeatMapCabinRowSectionElement;
   sectionIndex: number;
@@ -21,17 +21,30 @@ const Element = ({
   isUnique: boolean;
 }) => {
   const totalSize = width - MARGIN * 2;
-
+  console.log(elementIndex);
   // return  <EmptyElement width={totalSize} />
-  
+
   switch (element.type) {
     case 'empty':
       return <EmptyElement width={totalSize} />;
     case 'seat':
-      return <SeatElement currentPassengerId={currentPassengerId} element={element} width={totalSize} />;
+      return (
+        <SeatElement
+          currentPassengerId={currentPassengerId}
+          element={element}
+          width={totalSize}
+        />
+      );
     default:
-      return <AmenityElement amenity={element.type} sectionIndex={sectionIndex} elementIndex={elementIndex} width={totalSize} isUnique={isUnique} />;
+      return (
+        <AmenityElement
+          amenity={element.type}
+          sectionIndex={sectionIndex}
+          width={totalSize}
+          isUnique={isUnique}
+        />
+      );
   }
-}
+};
 
-export default Element
+export default Element;
