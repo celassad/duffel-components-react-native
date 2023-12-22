@@ -4,7 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  View
 } from 'react-native';
 import { Text } from 'react-native-elements';
 import {
@@ -12,7 +12,7 @@ import {
   OfferSliceSegment,
   Passenger,
   SeatMap,
-  SeatMapCabinRowSectionElement,
+  SeatMapCabinRowSectionElement
 } from '../../../duffelTypes';
 import TabFooter from '../../CommonComponents/TabFooter';
 import TabHeader from '../../CommonComponents/TabHeader';
@@ -162,20 +162,21 @@ function TabView({
       const elementService = element.available_services?.filter(
         (e) => e.passenger_id === passenger?.id
       )?.[0];
-      const isSelected = services.filter(
-        (s) =>
-          s.serviceInformation.type === 'seat' &&
-          s.serviceInformation.designator === element.designator
-      )?.[0];
+      // const isSelected = services.filter(
+      //   (s) =>
+      //     s.serviceInformation.type === 'seat' &&
+      //     s.serviceInformation.passengerId === passenger.id && 
+      //     s.serviceInformation.designator === element.designator
+      // )?.[0];
 
-      if (elementService && element.type === 'seat' && !isSelected) {
+      if (elementService && element.type === 'seat') {
         const currentSelectedSeatIndex = services.findIndex(
           (s) =>
             s.serviceInformation.type === 'seat' &&
             s.serviceInformation.passengerId === passenger?.id &&
             s.serviceInformation.segmentId === segment?.id
         );
-        if (currentSelectedSeatIndex) {
+        if (currentSelectedSeatIndex > -1) {
           services.splice(currentSelectedSeatIndex, 1);
         }
         services.push({

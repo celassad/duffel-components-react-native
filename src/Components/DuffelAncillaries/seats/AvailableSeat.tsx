@@ -18,8 +18,13 @@ const AvailableSeat = React.memo(
     selected: boolean;
     onPress?: () => void;
   }) => {
+    const disabled = onPress == null;
     return (
-      <TouchableHighlight onPress={onPress} disabled={!onPress}>
+      <TouchableHighlight
+        onPress={onPress}
+        disabled={disabled}
+        underlayColor={colors.SEAT_BACKGROUND}
+      >
         <View
           style={[
             {
