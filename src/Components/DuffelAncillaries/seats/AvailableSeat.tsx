@@ -10,18 +10,16 @@ const AvailableSeat = React.memo(
     seatLabel,
     isFeePayable,
     selected,
+    onPress,
   }: {
     width: number;
     seatLabel: string;
     isFeePayable: boolean;
     selected: boolean;
+    onPress: () => void;
   }) => {
     return (
-      <TouchableHighlight
-        onPress={() => {
-          console.log(seatLabel);
-        }}
-      >
+      <TouchableHighlight onPress={onPress}>
         <View
           style={[
             {

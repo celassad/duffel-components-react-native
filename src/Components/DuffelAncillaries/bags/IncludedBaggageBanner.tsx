@@ -24,7 +24,7 @@ export default function IncludedBaggageBanner({
     }
   );
 
-  const baggageLabelStringArray = [];
+  const baggageLabelStringArray: string[] = [];
   if (carryOnBagsQuantity > 0) {
     baggageLabelStringArray.push(
       withPlural(carryOnBagsQuantity, t('cabinBag'), t('cabinBags'))

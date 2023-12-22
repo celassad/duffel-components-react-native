@@ -14,3 +14,10 @@ export const getSegmentList = (offer: Offer) =>
     (accumulator, slice) => [...accumulator, ...slice.segments],
     new Array<OfferSliceSegment>()
   );
+
+export const getPassengerInitials = (passengerName = '') =>
+  passengerName
+    .split(' ')
+    .map((partOfTheName) => partOfTheName[0])
+    .slice(0, 2)
+    .join('');

@@ -17,6 +17,7 @@ import {
   SeatMapCabinRowSection,
   SeatMapCabinRowSectionElement,
 } from '../../../duffelTypes';
+import { SelectedService, WithServiceInformation } from '../types';
 import Element from './Element';
 import {
   getCabinsForSegmentAndDeck,
@@ -34,15 +35,21 @@ const SeatMapView = ({
   passenger,
   t,
   seatMap,
+  selectSeat,
+  isSeatSelected,
 }: {
   offer: Offer;
   segment: OfferSliceSegment;
   passenger: Passenger;
   t: any;
   seatMap: SeatMap;
+  selectSeat: (element: SeatMapCabinRowSectionElement) => void;
+  isSeatSelected: (
+    element: SeatMapCabinRowSectionElement
+  ) => WithServiceInformation<SelectedService>;
 }) => {
-  //   const [selectedDeck, setSelectedDeck] = React.useState(0);
   console.log(offer.id, segment.id, t('Welcome'));
+
   const cabins = useMemo(
     () => getCabinsForSegmentAndDeck(0, seatMap),
     [seatMap]
@@ -52,9 +59,6 @@ const SeatMapView = ({
   if (!seatMap || !seatMap.cabins || !seatMap.cabins.length)
     return <SeatMapUnavailable />;
 
-  //   const hasMultipleDecks = cabins.length !== seatMap.cabins.length;
-  //   const anyHasWings = seatMap.cabins.some((cabin) => cabin.wings);
-
   if (!cabins || !cabins.length) {
     return <SeatMapUnavailable />;
   }
@@ -63,7 +67,14 @@ const SeatMapView = ({
     <View style={{ width: '100%', marginVertical: 30, flex: 1 }}>
       <Legend symbols={symbols} />
       {cabins.map((cabin: SeatMapCabin) => {
-        return <Cabin cabin={cabin} currentPassengerId={passenger.id} />;
+        return (
+          <Cabin
+            cabin={cabin}
+            selectSeat={selectSeat}
+            isSeatSelected={isSeatSelected}
+            currentPassengerId={passenger.id}
+          />
+        );
       })}
     </View>
   );
@@ -72,9 +83,15 @@ const SeatMapView = ({
 function Cabin({
   cabin,
   currentPassengerId,
+  selectSeat,
+  isSeatSelected,
 }: {
   cabin: SeatMapCabin;
   currentPassengerId: string;
+  selectSeat: (element: SeatMapCabinRowSectionElement) => void;
+  isSeatSelected: (
+    element: SeatMapCabinRowSectionElement
+  ) => WithServiceInformation<SelectedService>;
 }) {
   const cabinWidth = windowWidth - MODAL_PADDING * 2;
   const maxNbElements = useMemo(() => getMaxElements(cabin.rows), [cabin.rows]);
@@ -94,22 +111,17 @@ function Cabin({
           currentPassengerId={currentPassengerId}
           width={cabinWidth}
           maxNbElements={maxNbElements}
+          selectSeat={selectSeat}
+          isSeatSelected={isSeatSelected}
         />
       </TouchableOpacity>
     );
   };
-
-  // const getItemLayout = (data, index) => ({
-  //   length: 30,
-  //   offset: 30 * index,
-  //   index,
-  // });
-
   return (
     <FlatList
       data={cabin.rows}
       renderItem={renderItem}
-      // getItemLayout={getItemLayout}
+      // initialNumToRender={1}
     />
   );
 }
@@ -121,11 +133,17 @@ function Row({
   width,
   maxNbElements,
   currentPassengerId,
+  selectSeat,
+  isSeatSelected,
 }: {
   row: SeatMapCabinRow;
   width: number;
   maxNbElements: number;
   currentPassengerId: string;
+  selectSeat: (element: SeatMapCabinRowSectionElement) => void;
+  isSeatSelected: (
+    element: SeatMapCabinRowSectionElement
+  ) => WithServiceInformation<SelectedService>;
 }) {
   const rowNumber = useMemo(() => getRowNumber(row), [row]);
   const rowLength = useMemo(() => Object.keys(row.sections).length, [row]);
@@ -142,6 +160,8 @@ function Row({
             sectionIndex={index}
             width={(width - totalAisleSpace) / rowLength}
             maxNbElements={maxNbElements}
+            selectSeat={selectSeat}
+            isSeatSelected={isSeatSelected}
           />
         );
       })}
@@ -165,12 +185,18 @@ function RowSection({
   currentPassengerId,
   width,
   maxNbElements,
+  selectSeat,
+  isSeatSelected,
 }: {
   section: SeatMapCabinRowSection;
   sectionIndex: number;
   currentPassengerId: string;
   width: number;
   maxNbElements: number;
+  selectSeat: (element: SeatMapCabinRowSectionElement) => void;
+  isSeatSelected: (
+    element: SeatMapCabinRowSectionElement
+  ) => WithServiceInformation<SelectedService>;
 }) {
   const hasOneElement = useMemo(
     () => section.elements?.length === 1,
@@ -193,6 +219,8 @@ function RowSection({
               element={element}
               width={elementWidth}
               isUnique={hasOneElement}
+              selectSeat={selectSeat}
+              isSeatSelected={isSeatSelected}
             />
           );
         }

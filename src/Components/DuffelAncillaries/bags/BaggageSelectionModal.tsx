@@ -12,7 +12,7 @@ import { Offer, OfferSliceSegment, Passenger } from '../../../duffelTypes';
 import TabFooter from '../../CommonComponents/TabFooter';
 import TabHeader from '../../CommonComponents/TabHeader';
 import { capitalizeFirstLetter, getSegmentList, withPlural } from '../../tools';
-import { SelectedService } from '../types';
+import { SelectedService, WithServiceInformation } from '../types';
 import PassengerBagage from './PassengerBaggage';
 
 export default function BaggageSelectionModal({
@@ -29,9 +29,9 @@ export default function BaggageSelectionModal({
   offer: Offer;
   passengers: Passenger[];
   t: any;
-  selectedBaggageServices: SelectedService[];
+  selectedBaggageServices: WithServiceInformation<SelectedService>[];
   setSelectedBaggageServices: React.Dispatch<
-    React.SetStateAction<SelectedService[]>
+    React.SetStateAction<WithServiceInformation<SelectedService>[]>
   >;
 }) {
   return (
@@ -84,9 +84,9 @@ function BaggageSelectionView({
   passengers: Passenger[];
   t: any;
   handleModal: () => void;
-  selectedBaggageServices: SelectedService[];
+  selectedBaggageServices: WithServiceInformation<SelectedService>[];
   setSelectedBaggageServices: React.Dispatch<
-    React.SetStateAction<SelectedService[]>
+    React.SetStateAction<WithServiceInformation<SelectedService>[]>
   >;
 }) {
   const [index, setIndex] = useState(0);
@@ -96,8 +96,8 @@ function BaggageSelectionView({
     var price = 0;
     var currency = '';
     selectedBaggageServices.map((s) => {
-      price += Number(s.service.total_amount) * s.quantity;
-      currency = s.service.total_currency;
+      price += Number(s.serviceInformation.total_amount) * s.quantity;
+      currency = s.serviceInformation.total_currency;
     });
     return `${price} ${currency}`;
   }, [selectedBaggageServices]);
@@ -175,9 +175,9 @@ function TabView({
   passengers: Passenger[];
   t: any;
   index: number;
-  selectedBaggageServices: SelectedService[];
+  selectedBaggageServices: WithServiceInformation<SelectedService>[];
   setSelectedBaggageServices: React.Dispatch<
-    React.SetStateAction<SelectedService[]>
+    React.SetStateAction<WithServiceInformation<SelectedService>[]>
   >;
   segments: OfferSliceSegment[];
 }) {
@@ -211,9 +211,9 @@ function SegmentBaggageSelection({
   segment: OfferSliceSegment;
   passengers: Passenger[];
   t: any;
-  selectedBaggageServices: SelectedService[];
+  selectedBaggageServices: WithServiceInformation<SelectedService>[];
   setSelectedBaggageServices: React.Dispatch<
-    React.SetStateAction<SelectedService[]>
+    React.SetStateAction<WithServiceInformation<SelectedService>[]>
   >;
 }) {
   const title = `${t('flightFrom')} ${segment.origin.iata_code} ${t('to')} ${

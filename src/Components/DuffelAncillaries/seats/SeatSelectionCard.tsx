@@ -3,6 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Icon, Text } from 'react-native-elements';
 import { Offer, Passenger } from '../../../duffelTypes';
 import i18n from '../../../translation';
+import { SelectedService, WithServiceInformation } from '../types';
 import SeatSelectionModal from './SeatSelectionModal';
 
 type SeatSelectionCardProps = {
@@ -10,6 +11,10 @@ type SeatSelectionCardProps = {
   passengers: Passenger[];
   lng: 'en' | 'fr';
   seatMaps: any[] | undefined;
+  selectedServices: WithServiceInformation<SelectedService>[];
+  setSelectedServices: React.Dispatch<
+    React.SetStateAction<WithServiceInformation<SelectedService>[]>
+  >;
 };
 
 export default function SeatSelectionCard(props: SeatSelectionCardProps) {
@@ -53,6 +58,8 @@ export default function SeatSelectionCard(props: SeatSelectionCardProps) {
         visible={visible}
         seatMaps={props.seatMaps}
         t={t}
+        selectedServices={props.selectedServices}
+        setSelectedServices={props.setSelectedServices}
       />
     </>
   );

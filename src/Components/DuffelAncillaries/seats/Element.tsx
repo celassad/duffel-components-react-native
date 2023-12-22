@@ -1,5 +1,6 @@
 import React from 'react';
 import { SeatMapCabinRowSectionElement } from '../../../duffelTypes';
+import { SelectedService, WithServiceInformation } from '../types';
 import AmenityElement from './AmenityElement';
 import EmptyElement from './EmptyElement';
 import { MARGIN } from './helpers';
@@ -12,6 +13,8 @@ const Element = ({
   currentPassengerId,
   width,
   isUnique,
+  selectSeat,
+  isSeatSelected,
 }: {
   element: SeatMapCabinRowSectionElement;
   sectionIndex: number;
@@ -19,6 +22,10 @@ const Element = ({
   currentPassengerId: string;
   width: number;
   isUnique: boolean;
+  selectSeat: (element: SeatMapCabinRowSectionElement) => void;
+  isSeatSelected: (
+    element: SeatMapCabinRowSectionElement
+  ) => WithServiceInformation<SelectedService>;
 }) => {
   const totalSize = width - MARGIN * 2;
   console.log(elementIndex);
@@ -33,6 +40,8 @@ const Element = ({
           currentPassengerId={currentPassengerId}
           element={element}
           width={totalSize}
+          selectSeat={selectSeat}
+          isSeatSelected={isSeatSelected}
         />
       );
     default:

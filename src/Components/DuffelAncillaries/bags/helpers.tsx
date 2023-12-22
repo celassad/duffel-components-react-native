@@ -1,17 +1,20 @@
 import { withPlural } from '../../tools';
-import { SelectedService } from '../types';
+import { SelectedService, WithServiceInformation } from '../types';
 
-export function getBagsAddedText(services: SelectedService[], t: any) {
+export function getBagsAddedText(
+  services: WithServiceInformation<SelectedService>[],
+  t: any
+) {
   if (!services || services?.length === 0) {
     return t('baggageCardSubtitle');
   } else {
     var quantity = 0;
     var amount = 0;
-    var currency = services[0]?.service.total_currency;
+    var currency = services[0]?.serviceInformation.total_currency;
     services.map((s) => {
-      if (s.service.type === 'baggage') {
+      if (s.serviceInformation.type === 'baggage') {
         quantity += s.quantity;
-        amount += Number(s.service.total_amount);
+        amount += Number(s.serviceInformation.total_amount);
       }
     });
 

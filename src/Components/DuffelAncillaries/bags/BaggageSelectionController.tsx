@@ -3,15 +3,15 @@ import { StyleSheet, View } from 'react-native';
 import { Icon, Text } from 'react-native-elements';
 import { Service, ServiceMetadata } from '../../../duffelTypes';
 import { capitalizeFirstLetter } from '../../tools';
-import { SelectedService } from '../types';
+import { SelectedService, WithServiceInformation } from '../types';
 
 function getServiceQuantity(
   service: Service,
-  selectedServices: SelectedService[]
+  selectedServices: WithServiceInformation<SelectedService>[]
 ) {
   var serviceQuantity = 0;
   selectedServices?.map((s) => {
-    if (s.service.id === service.id) {
+    if (s.id === service.id) {
       serviceQuantity = s.quantity;
     }
   });
@@ -26,9 +26,9 @@ export default function BaggageSelectionController({
 }: {
   availableService: Service;
   t: any;
-  selectedBaggageServices: SelectedService[];
+  selectedBaggageServices: WithServiceInformation<SelectedService>[];
   setSelectedBaggageServices: React.Dispatch<
-    React.SetStateAction<SelectedService[]>
+    React.SetStateAction<WithServiceInformation<SelectedService>[]>
   >;
 }) {
   const serviceName = capitalizeFirstLetter(
@@ -45,17 +45,27 @@ export default function BaggageSelectionController({
   const [quantity, setQuantity] = useState(serviceQuantity);
 
   function selectService(quantity: number) {
-    var selectedServices: SelectedService[] = [];
+    var selectedServices: WithServiceInformation<SelectedService>[] = [];
 
     selectedBaggageServices.map((selectedService) => {
-      if (selectedService.service.id !== availableService.id) {
+      if (selectedService.id !== availableService.id) {
         selectedServices.push(selectedService);
       }
     });
+    //TODO ADD PASSENGER AND SEGMENT ID
     if (quantity > 0) {
-      const newSelectedService = {
-        service: availableService,
+      const newSelectedService: WithServiceInformation<SelectedService> = {
+        id: availableService.id,
         quantity: quantity,
+        serviceInformation: {
+          type: 'baggage',
+          passengerId: '',
+          passengerName: '',
+          segmentId: '',
+          total_amount: availableService.total_amount,
+          total_currency: availableService.total_currency,
+          designator: undefined,
+        },
       };
       selectedServices.push(newSelectedService);
     }

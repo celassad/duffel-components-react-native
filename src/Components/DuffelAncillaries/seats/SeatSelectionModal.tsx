@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Modal,
   StyleSheet,
@@ -12,10 +12,12 @@ import {
   OfferSliceSegment,
   Passenger,
   SeatMap,
+  SeatMapCabinRowSectionElement,
 } from '../../../duffelTypes';
 import TabFooter from '../../CommonComponents/TabFooter';
 import TabHeader from '../../CommonComponents/TabHeader';
 import { capitalizeFirstLetter, getSegmentList, withPlural } from '../../tools';
+import { SelectedService, WithServiceInformation } from '../types';
 import SeatMapView from './SeatMapView';
 
 const MODAL_PADDING = 20;
@@ -27,6 +29,8 @@ export default function SeatSelectionModal({
   passengers,
   t,
   seatMaps,
+  selectedServices,
+  setSelectedServices,
 }: {
   handleModal: () => void;
   visible: boolean;
@@ -34,6 +38,10 @@ export default function SeatSelectionModal({
   passengers: Passenger[];
   t: any;
   seatMaps: SeatMap[];
+  selectedServices: WithServiceInformation<SelectedService>[];
+  setSelectedServices: React.Dispatch<
+    React.SetStateAction<WithServiceInformation<SelectedService>[]>
+  >;
 }) {
   return (
     <Modal
@@ -58,6 +66,8 @@ export default function SeatSelectionModal({
                 passengers={passengers}
                 handleModal={handleModal}
                 seatMaps={seatMaps}
+                selectedServices={selectedServices}
+                setSelectedServices={setSelectedServices}
               />
             </View>
           </TouchableWithoutFeedback>
@@ -73,12 +83,18 @@ function SeatSelectionView({
   t,
   handleModal,
   seatMaps,
+  selectedServices,
+  setSelectedServices,
 }: {
   offer: Offer;
   passengers: Passenger[];
   t: any;
   handleModal: () => void;
   seatMaps: SeatMap[];
+  selectedServices: WithServiceInformation<SelectedService>[];
+  setSelectedServices: React.Dispatch<
+    React.SetStateAction<WithServiceInformation<SelectedService>[]>
+  >;
 }) {
   const [index, setIndex] = useState(0);
   const segments = getSegmentList(offer);
@@ -96,6 +112,8 @@ function SeatSelectionView({
         segments={segments}
         passengers={passengers}
         seatMaps={seatMaps}
+        selectedServices={selectedServices}
+        setSelectedServices={setSelectedServices}
         t={t}
       />
       <TotalPrice price={totalPrice} nbBags={totalBags} t={t} />
@@ -117,6 +135,8 @@ function TabView({
   index,
   segments,
   seatMaps,
+  selectedServices,
+  setSelectedServices,
 }: {
   offer: Offer;
   passengers: Passenger[];
@@ -124,6 +144,10 @@ function TabView({
   index: number;
   segments: OfferSliceSegment[];
   seatMaps: SeatMap[];
+  selectedServices: WithServiceInformation<SelectedService>[];
+  setSelectedServices: React.Dispatch<
+    React.SetStateAction<WithServiceInformation<SelectedService>[]>
+  >;
 }) {
   const nbPassengers = passengers?.length;
   const segmentIndex = Math.floor(index / nbPassengers);
@@ -134,6 +158,60 @@ function TabView({
   if (!segment || !passenger || !seatMap) {
     return <View />;
   }
+
+  const selectSeat = useCallback(
+    (element: SeatMapCabinRowSectionElement) => {
+      let services = [...selectedServices];
+      const elementService = element.available_services?.filter(
+        (e) => e.passenger_id === passenger.id
+      )?.[0];
+      const isSelected = services.filter(
+        (s) =>
+          s.serviceInformation.type === 'seat' &&
+          s.serviceInformation.designator === element.designator
+      )?.[0];
+
+      if (elementService && element.type === 'seat' && !isSelected) {
+        const currentSelectedSeatIndex = services.findIndex(
+          (s) =>
+            s.serviceInformation.type === 'seat' &&
+            s.serviceInformation.passengerId === passenger.id &&
+            s.serviceInformation.segmentId === segment.id
+        );
+        if (currentSelectedSeatIndex) {
+          services.splice(currentSelectedSeatIndex, 1);
+        }
+        services.push({
+          id: elementService.id,
+          quantity: 1,
+          serviceInformation: {
+            type: element.type,
+            segmentId: segment.id,
+            passengerId: passenger.id,
+            passengerName: `${passenger.given_name} ${passenger.family_name}`,
+            designator: element.designator,
+            disclosures: element.disclosures,
+            total_amount: elementService.total_amount,
+            total_currency: elementService.total_currency,
+          },
+        });
+        setSelectedServices(services);
+      }
+    },
+    [selectedServices, setSelectedServices, passenger, segment]
+  );
+
+  const isSeatSelected = useCallback(
+    (element: SeatMapCabinRowSectionElement) => {
+      return selectedServices.filter(
+        (s) =>
+          s.serviceInformation.type === 'seat' &&
+          s.serviceInformation.designator === element.designator
+      )?.[0];
+    },
+    [selectedServices]
+  );
+
   return (
     <SegmentSeatSelection
       key={segment.id}
@@ -141,6 +219,8 @@ function TabView({
       segment={segment}
       seatMap={seatMap}
       passenger={passenger}
+      selectSeat={selectSeat}
+      isSeatSelected={isSeatSelected}
       t={t}
     />
   );
@@ -175,12 +255,18 @@ function SegmentSeatSelection({
   passenger,
   t,
   seatMap,
+  selectSeat,
+  isSeatSelected,
 }: {
   offer: Offer;
   segment: OfferSliceSegment;
   passenger: Passenger;
   t: any;
   seatMap: SeatMap;
+  selectSeat: (element: SeatMapCabinRowSectionElement) => void;
+  isSeatSelected: (
+    element: SeatMapCabinRowSectionElement
+  ) => WithServiceInformation<SelectedService>;
 }) {
   const title = `${t('flightFrom')} ${segment.origin.iata_code} ${t('to')} ${
     segment.destination.iata_code
@@ -197,6 +283,8 @@ function SegmentSeatSelection({
         offer={offer}
         t={t}
         seatMap={seatMap}
+        selectSeat={selectSeat}
+        isSeatSelected={isSeatSelected}
       />
     </View>
   );

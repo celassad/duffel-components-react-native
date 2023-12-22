@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Icon, Text } from 'react-native-elements';
 import { Offer, Passenger } from '../../../duffelTypes';
 import i18n from '../../../translation/index';
-import { SelectedService } from '../types';
+import { SelectedService, WithServiceInformation } from '../types';
 import BaggageSelectionModal from './BaggageSelectionModal';
 import { getBagsAddedText, hasBagSelected } from './helpers';
 
@@ -17,9 +17,9 @@ export default function BaggageSelectionCard({
   offer: Offer;
   passengers: Passenger[];
   lng: 'en' | 'fr';
-  selectedBaggageServices: SelectedService[];
+  selectedBaggageServices: WithServiceInformation<SelectedService>[];
   setSelectedBaggageServices: React.Dispatch<
-    React.SetStateAction<SelectedService[]>
+    React.SetStateAction<WithServiceInformation<SelectedService>[]>
   >;
 }) {
   const t = i18n.getFixedT(lng);

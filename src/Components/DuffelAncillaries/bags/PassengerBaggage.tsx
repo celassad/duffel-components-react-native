@@ -7,7 +7,7 @@ import {
   Passenger,
   Service,
 } from '../../../duffelTypes';
-import { SelectedService } from '../types';
+import { SelectedService, WithServiceInformation } from '../types';
 import BaggageSelectionController from './BaggageSelectionController';
 import IncludedBaggageBanner from './IncludedBaggageBanner';
 
@@ -25,9 +25,9 @@ export default function PassengerBagage({
   segment: OfferSliceSegment;
   offer: Offer;
   t: any;
-  selectedBaggageServices: SelectedService[];
+  selectedBaggageServices: WithServiceInformation<SelectedService>[];
   setSelectedBaggageServices: React.Dispatch<
-    React.SetStateAction<SelectedService[]>
+    React.SetStateAction<WithServiceInformation<SelectedService>[]>
   >;
 }) {
   const includedBaggage = segment?.passengers?.[index]?.baggages;
