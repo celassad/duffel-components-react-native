@@ -25,7 +25,7 @@ const Element = ({
   selectSeat: (element: SeatMapCabinRowSectionElement) => void;
   isSeatSelected: (
     element: SeatMapCabinRowSectionElement
-  ) => WithServiceInformation<SelectedService>;
+  ) => WithServiceInformation<SelectedService> | undefined;
 }) => {
   const totalSize = width - MARGIN * 2;
   console.log(elementIndex);

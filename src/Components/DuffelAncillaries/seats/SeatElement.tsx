@@ -18,7 +18,7 @@ const SeatElement = ({
   selectSeat: (element: SeatMapCabinRowSectionElement) => void;
   isSeatSelected: (
     element: SeatMapCabinRowSectionElement
-  ) => WithServiceInformation<SelectedService>;
+  ) => WithServiceInformation<SelectedService> | undefined;
 }) => {
   // console.log('seat element', element.type);
 

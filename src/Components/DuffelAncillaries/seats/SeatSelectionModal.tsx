@@ -155,15 +155,12 @@ function TabView({
   const segment = segments?.[segmentIndex];
   const passenger = passengers?.[passengerIndex];
   const seatMap = seatMaps?.[segmentIndex];
-  if (!segment || !passenger || !seatMap) {
-    return <View />;
-  }
 
   const selectSeat = useCallback(
     (element: SeatMapCabinRowSectionElement) => {
       let services = [...selectedServices];
       const elementService = element.available_services?.filter(
-        (e) => e.passenger_id === passenger.id
+        (e) => e.passenger_id === passenger?.id
       )?.[0];
       const isSelected = services.filter(
         (s) =>
@@ -175,8 +172,8 @@ function TabView({
         const currentSelectedSeatIndex = services.findIndex(
           (s) =>
             s.serviceInformation.type === 'seat' &&
-            s.serviceInformation.passengerId === passenger.id &&
-            s.serviceInformation.segmentId === segment.id
+            s.serviceInformation.passengerId === passenger?.id &&
+            s.serviceInformation.segmentId === segment?.id
         );
         if (currentSelectedSeatIndex) {
           services.splice(currentSelectedSeatIndex, 1);
@@ -186,9 +183,9 @@ function TabView({
           quantity: 1,
           serviceInformation: {
             type: element.type,
-            segmentId: segment.id,
-            passengerId: passenger.id,
-            passengerName: `${passenger.given_name} ${passenger.family_name}`,
+            segmentId: segment?.id ?? '',
+            passengerId: passenger?.id ?? '',
+            passengerName: `${passenger?.given_name} ${passenger?.family_name}`,
             designator: element.designator,
             disclosures: element.disclosures,
             total_amount: elementService.total_amount,
@@ -211,6 +208,10 @@ function TabView({
     },
     [selectedServices]
   );
+
+  if (!segment || !passenger || !seatMap) {
+    return <View />;
+  }
 
   return (
     <SegmentSeatSelection
@@ -266,7 +267,7 @@ function SegmentSeatSelection({
   selectSeat: (element: SeatMapCabinRowSectionElement) => void;
   isSeatSelected: (
     element: SeatMapCabinRowSectionElement
-  ) => WithServiceInformation<SelectedService>;
+  ) => WithServiceInformation<SelectedService> | undefined;
 }) {
   const title = `${t('flightFrom')} ${segment.origin.iata_code} ${t('to')} ${
     segment.destination.iata_code

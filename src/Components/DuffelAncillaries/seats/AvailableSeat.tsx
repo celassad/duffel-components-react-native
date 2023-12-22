@@ -16,10 +16,10 @@ const AvailableSeat = React.memo(
     seatLabel: string;
     isFeePayable: boolean;
     selected: boolean;
-    onPress: () => void;
+    onPress?: () => void;
   }) => {
     return (
-      <TouchableHighlight onPress={onPress}>
+      <TouchableHighlight onPress={onPress} disabled={!onPress}>
         <View
           style={[
             {

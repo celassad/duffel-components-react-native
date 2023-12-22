@@ -46,7 +46,7 @@ const SeatMapView = ({
   selectSeat: (element: SeatMapCabinRowSectionElement) => void;
   isSeatSelected: (
     element: SeatMapCabinRowSectionElement
-  ) => WithServiceInformation<SelectedService>;
+  ) => WithServiceInformation<SelectedService> | undefined;
 }) => {
   console.log(offer.id, segment.id, t('Welcome'));
 
@@ -91,7 +91,7 @@ function Cabin({
   selectSeat: (element: SeatMapCabinRowSectionElement) => void;
   isSeatSelected: (
     element: SeatMapCabinRowSectionElement
-  ) => WithServiceInformation<SelectedService>;
+  ) => WithServiceInformation<SelectedService> | undefined;
 }) {
   const cabinWidth = windowWidth - MODAL_PADDING * 2;
   const maxNbElements = useMemo(() => getMaxElements(cabin.rows), [cabin.rows]);
@@ -143,7 +143,7 @@ function Row({
   selectSeat: (element: SeatMapCabinRowSectionElement) => void;
   isSeatSelected: (
     element: SeatMapCabinRowSectionElement
-  ) => WithServiceInformation<SelectedService>;
+  ) => WithServiceInformation<SelectedService> | undefined;
 }) {
   const rowNumber = useMemo(() => getRowNumber(row), [row]);
   const rowLength = useMemo(() => Object.keys(row.sections).length, [row]);
@@ -196,7 +196,7 @@ function RowSection({
   selectSeat: (element: SeatMapCabinRowSectionElement) => void;
   isSeatSelected: (
     element: SeatMapCabinRowSectionElement
-  ) => WithServiceInformation<SelectedService>;
+  ) => WithServiceInformation<SelectedService> | undefined;
 }) {
   const hasOneElement = useMemo(
     () => section.elements?.length === 1,
