@@ -1,10 +1,7 @@
-import {
-  SelectedService,
-  WithServiceInformation,
-} from 'duffel-components-react-native/src/Components/DuffelAncillaries/types';
 import React from 'react';
 import { Passenger, SeatMapCabinRowSectionElement } from '../../../duffelTypes';
 import { getPassengerInitials } from '../../tools';
+import { SelectedService, WithServiceInformation } from '../types';
 import AvailableSeat from './AvailableSeat';
 import SeatElementUnavailable from './SeatElementUnavailable';
 
