@@ -1,43 +1,38 @@
-import React, { useMemo } from 'react';
-import { SeatMapCabinRowSectionElement } from '../../../duffelTypes';
+import {
+  SelectedService,
+  WithServiceInformation,
+} from 'duffel-components-react-native/src/Components/DuffelAncillaries/types';
+import React from 'react';
+import { Passenger, SeatMapCabinRowSectionElement } from '../../../duffelTypes';
 import { getPassengerInitials } from '../../tools';
-import { SelectedService, WithServiceInformation } from '../types';
 import AvailableSeat from './AvailableSeat';
 import SeatElementUnavailable from './SeatElementUnavailable';
 
 const SeatElement = ({
   element,
   width,
-  currentPassengerId,
+  currentPassenger,
   selectSeat,
   isSeatSelected,
 }: {
   element: SeatMapCabinRowSectionElement;
   width: number;
-  currentPassengerId: string;
+  currentPassenger: Passenger;
   selectSeat: (element: SeatMapCabinRowSectionElement) => void;
-  isSeatSelected: (
-    element: SeatMapCabinRowSectionElement
-  ) => WithServiceInformation<SelectedService> | undefined;
+  isSeatSelected: WithServiceInformation<SelectedService> | undefined;
 }) => {
   const seatServiceFromElement = element?.available_services?.find(
-    (service) => service.passenger_id === currentPassengerId
+    (service) => service.passenger_id === currentPassenger.id
   );
 
-  const selected = isSeatSelected(element);
-  const seatLabel = selected
-    ? getPassengerInitials(selected.serviceInformation.passengerName)
-    : element?.designator?.charAt(element.designator.length - 1) ?? '';
+  const seatLabel =
+    isSeatSelected != null
+      ? getPassengerInitials(isSeatSelected.serviceInformation.passengerName)
+      : element?.designator?.charAt(element.designator.length - 1) ?? '';
+
   const isFeePayable =
     !isNaN(+(seatServiceFromElement?.total_amount ?? 0)) &&
     +(seatServiceFromElement?.total_amount ?? 0) !== 0;
-
-  const isSelected = selected != null;
-  const onPressSelect = useMemo(
-    () => (!isSelected ? () => selectSeat(element) : undefined),
-    [element, isSelected, selectSeat]
-  );
-  if (isSelected) console.log('selected', selected);
 
   if (!seatServiceFromElement) return <SeatElementUnavailable width={width} />;
 
@@ -46,10 +41,10 @@ const SeatElement = ({
       width={width}
       seatLabel={seatLabel}
       isFeePayable={isFeePayable}
-      selected={isSelected}
-      onPress={onPressSelect}
+      selected={isSeatSelected != null}
+      onPress={() => selectSeat(element)}
     />
   );
 };
 
-export default SeatElement;
+export default React.memo(SeatElement);

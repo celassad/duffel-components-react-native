@@ -1,10 +1,10 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Modal,
   StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View
+  View,
 } from 'react-native';
 import { Text } from 'react-native-elements';
 import {
@@ -12,7 +12,6 @@ import {
   OfferSliceSegment,
   Passenger,
   SeatMap,
-  SeatMapCabinRowSectionElement
 } from '../../../duffelTypes';
 import TabFooter from '../../CommonComponents/TabFooter';
 import TabHeader from '../../CommonComponents/TabHeader';
@@ -156,60 +155,6 @@ function TabView({
   const passenger = passengers?.[passengerIndex];
   const seatMap = seatMaps?.[segmentIndex];
 
-  const selectSeat = useCallback(
-    (element: SeatMapCabinRowSectionElement) => {
-      let services = [...selectedServices];
-      const elementService = element.available_services?.filter(
-        (e) => e.passenger_id === passenger?.id
-      )?.[0];
-      // const isSelected = services.filter(
-      //   (s) =>
-      //     s.serviceInformation.type === 'seat' &&
-      //     s.serviceInformation.passengerId === passenger.id && 
-      //     s.serviceInformation.designator === element.designator
-      // )?.[0];
-
-      if (elementService && element.type === 'seat') {
-        const currentSelectedSeatIndex = services.findIndex(
-          (s) =>
-            s.serviceInformation.type === 'seat' &&
-            s.serviceInformation.passengerId === passenger?.id &&
-            s.serviceInformation.segmentId === segment?.id
-        );
-        if (currentSelectedSeatIndex > -1) {
-          services.splice(currentSelectedSeatIndex, 1);
-        }
-        services.push({
-          id: elementService.id,
-          quantity: 1,
-          serviceInformation: {
-            type: element.type,
-            segmentId: segment?.id ?? '',
-            passengerId: passenger?.id ?? '',
-            passengerName: `${passenger?.given_name} ${passenger?.family_name}`,
-            designator: element.designator,
-            disclosures: element.disclosures,
-            total_amount: elementService.total_amount,
-            total_currency: elementService.total_currency,
-          },
-        });
-        setSelectedServices(services);
-      }
-    },
-    [selectedServices, setSelectedServices, passenger, segment]
-  );
-
-  const isSeatSelected = useCallback(
-    (element: SeatMapCabinRowSectionElement) => {
-      return selectedServices.filter(
-        (s) =>
-          s.serviceInformation.type === 'seat' &&
-          s.serviceInformation.designator === element.designator
-      )?.[0];
-    },
-    [selectedServices]
-  );
-
   if (!segment || !passenger || !seatMap) {
     return <View />;
   }
@@ -221,8 +166,8 @@ function TabView({
       segment={segment}
       seatMap={seatMap}
       passenger={passenger}
-      selectSeat={selectSeat}
-      isSeatSelected={isSeatSelected}
+      selectedServices={selectedServices}
+      setSelectedServices={setSelectedServices}
       t={t}
     />
   );
@@ -257,18 +202,18 @@ function SegmentSeatSelection({
   passenger,
   t,
   seatMap,
-  selectSeat,
-  isSeatSelected,
+  selectedServices,
+  setSelectedServices,
 }: {
   offer: Offer;
   segment: OfferSliceSegment;
   passenger: Passenger;
   t: any;
   seatMap: SeatMap;
-  selectSeat: (element: SeatMapCabinRowSectionElement) => void;
-  isSeatSelected: (
-    element: SeatMapCabinRowSectionElement
-  ) => WithServiceInformation<SelectedService> | undefined;
+  selectedServices: WithServiceInformation<SelectedService>[];
+  setSelectedServices: React.Dispatch<
+    React.SetStateAction<WithServiceInformation<SelectedService>[]>
+  >;
 }) {
   const title = `${t('flightFrom')} ${segment.origin.iata_code} ${t('to')} ${
     segment.destination.iata_code
@@ -285,8 +230,8 @@ function SegmentSeatSelection({
         offer={offer}
         t={t}
         seatMap={seatMap}
-        selectSeat={selectSeat}
-        isSeatSelected={isSeatSelected}
+        selectedServices={selectedServices}
+        setSelectedServices={setSelectedServices}
       />
     </View>
   );

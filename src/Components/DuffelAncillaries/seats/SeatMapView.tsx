@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -35,21 +35,20 @@ const SeatMapView = ({
   passenger,
   t,
   seatMap,
-  selectSeat,
-  isSeatSelected,
+  selectedServices,
+  setSelectedServices,
 }: {
   offer: Offer;
   segment: OfferSliceSegment;
   passenger: Passenger;
   t: any;
   seatMap: SeatMap;
-  selectSeat: (element: SeatMapCabinRowSectionElement) => void;
-  isSeatSelected: (
-    element: SeatMapCabinRowSectionElement
-  ) => WithServiceInformation<SelectedService> | undefined;
+  selectedServices: WithServiceInformation<SelectedService>[];
+  setSelectedServices: React.Dispatch<
+    React.SetStateAction<WithServiceInformation<SelectedService>[]>
+  >;
 }) => {
   console.log(offer.id, segment.id, t('Welcome'));
-
   const cabins = useMemo(
     () => getCabinsForSegmentAndDeck(0, seatMap),
     [seatMap]
@@ -62,7 +61,6 @@ const SeatMapView = ({
   if (!cabins || !cabins.length) {
     return <SeatMapUnavailable />;
   }
-
   return (
     <View style={{ width: '100%', marginVertical: 30, flex: 1 }}>
       <Legend symbols={symbols} />
@@ -70,9 +68,10 @@ const SeatMapView = ({
         return (
           <Cabin
             cabin={cabin}
-            selectSeat={selectSeat}
-            isSeatSelected={isSeatSelected}
-            currentPassengerId={passenger.id}
+            selectedServices={selectedServices}
+            setSelectedServices={setSelectedServices}
+            currentPassenger={passenger}
+            currentSegmentId={segment.id}
           />
         );
       })}
@@ -82,19 +81,61 @@ const SeatMapView = ({
 
 function Cabin({
   cabin,
-  currentPassengerId,
-  selectSeat,
-  isSeatSelected,
+  selectedServices,
+  setSelectedServices,
+  currentSegmentId,
+  currentPassenger,
 }: {
   cabin: SeatMapCabin;
-  currentPassengerId: string;
-  selectSeat: (element: SeatMapCabinRowSectionElement) => void;
-  isSeatSelected: (
-    element: SeatMapCabinRowSectionElement
-  ) => WithServiceInformation<SelectedService> | undefined;
+  selectedServices: WithServiceInformation<SelectedService>[];
+  setSelectedServices: React.Dispatch<
+    React.SetStateAction<WithServiceInformation<SelectedService>[]>
+  >;
+  currentSegmentId: string;
+  currentPassenger: Passenger;
 }) {
   const cabinWidth = windowWidth - MODAL_PADDING * 2;
   const maxNbElements = useMemo(() => getMaxElements(cabin.rows), [cabin.rows]);
+
+  const selectSeat = useCallback(
+    (element: SeatMapCabinRowSectionElement) => {
+      const elementService = element.available_services?.filter(
+        (e) => e.passenger_id === currentPassenger.id
+      )?.[0];
+      setSelectedServices((prevServices) => {
+        let services = [...prevServices];
+        if (elementService && element.type === 'seat') {
+          const currentSelectedSeatIndex = services.findIndex(
+            (s) =>
+              s.serviceInformation.type === 'seat' &&
+              s.serviceInformation.passengerId === currentPassenger.id &&
+              s.serviceInformation.segmentId === currentSegmentId
+          );
+          if (currentSelectedSeatIndex > -1) {
+            services.splice(currentSelectedSeatIndex, 1);
+          }
+          services.push({
+            id: elementService.id,
+            quantity: 1,
+            serviceInformation: {
+              type: element.type,
+              segmentId: currentSegmentId ?? '',
+              passengerId: currentPassenger.id ?? '',
+              passengerName:
+                `${currentPassenger.given_name} ${currentPassenger.family_name}` ??
+                '',
+              designator: element.designator,
+              disclosures: element.disclosures,
+              total_amount: elementService.total_amount,
+              total_currency: elementService.total_currency,
+            },
+          });
+        }
+        return services;
+      });
+    },
+    [currentPassenger, currentSegmentId]
+  );
 
   const renderItem = ({
     item,
@@ -108,11 +149,12 @@ function Cabin({
         <Row
           key={`Row_${index}`}
           row={item}
-          currentPassengerId={currentPassengerId}
+          currentPassenger={currentPassenger}
+          currentSegmentId={currentSegmentId}
           width={cabinWidth}
           maxNbElements={maxNbElements}
+          selectedServices={selectedServices}
           selectSeat={selectSeat}
-          isSeatSelected={isSeatSelected}
         />
       </TouchableOpacity>
     );
@@ -132,22 +174,32 @@ function Row({
   row,
   width,
   maxNbElements,
-  currentPassengerId,
+  currentPassenger,
   selectSeat,
-  isSeatSelected,
+  selectedServices,
+  currentSegmentId,
 }: {
   row: SeatMapCabinRow;
   width: number;
   maxNbElements: number;
-  currentPassengerId: string;
+  currentPassenger: Passenger;
   selectSeat: (element: SeatMapCabinRowSectionElement) => void;
-  isSeatSelected: (
-    element: SeatMapCabinRowSectionElement
-  ) => WithServiceInformation<SelectedService> | undefined;
+  selectedServices: WithServiceInformation<SelectedService>[];
+  currentSegmentId: string;
 }) {
   const rowNumber = useMemo(() => getRowNumber(row), [row]);
   const rowLength = useMemo(() => Object.keys(row.sections).length, [row]);
   const totalAisleSpace = AISLE_SPACE * rowLength;
+
+  const rowDesignator = row?.sections?.[0]?.elements?.[0]?.designator?.slice(
+    0,
+    -1
+  );
+  const rowSelectedServices = useMemo(() => {
+    return selectedServices.filter(
+      (s) => s.serviceInformation.designator?.slice(0, -1) === rowDesignator
+    );
+  }, [rowDesignator, selectedServices]);
 
   return (
     <View style={{ flexDirection: 'row' }}>
@@ -156,12 +208,13 @@ function Row({
           <RowSection
             key={`Section_${rowNumber}_${index}`}
             section={section}
-            currentPassengerId={currentPassengerId}
+            currentPassenger={currentPassenger}
+            currentSegmentId={currentSegmentId}
             sectionIndex={index}
             width={(width - totalAisleSpace) / rowLength}
             maxNbElements={maxNbElements}
             selectSeat={selectSeat}
-            isSeatSelected={isSeatSelected}
+            selectedServices={rowSelectedServices}
           />
         );
       })}
@@ -179,56 +232,62 @@ function getMaxElements(rows: SeatMapCabinRow[]) {
   return nbElements;
 }
 
-function RowSection({
-  section,
-  sectionIndex,
-  currentPassengerId,
-  width,
-  maxNbElements,
-  selectSeat,
-  isSeatSelected,
-}: {
-  section: SeatMapCabinRowSection;
-  sectionIndex: number;
-  currentPassengerId: string;
-  width: number;
-  maxNbElements: number;
-  selectSeat: (element: SeatMapCabinRowSectionElement) => void;
-  isSeatSelected: (
-    element: SeatMapCabinRowSectionElement
-  ) => WithServiceInformation<SelectedService> | undefined;
-}) {
-  const hasOneElement = useMemo(
-    () => section.elements?.length === 1,
-    [section.elements?.length]
-  );
-  const elementWidth = useMemo(
-    () => width / maxNbElements,
-    [maxNbElements, width]
-  );
-  return (
-    <View style={styles.rowSectionView}>
-      {section.elements.map(
-        (element: SeatMapCabinRowSectionElement, index: number) => {
-          return (
-            <Element
-              key={`Element_${sectionIndex}_${index}`}
-              currentPassengerId={currentPassengerId}
-              sectionIndex={sectionIndex}
-              elementIndex={index}
-              element={element}
-              width={elementWidth}
-              isUnique={hasOneElement}
-              selectSeat={selectSeat}
-              isSeatSelected={isSeatSelected}
-            />
-          );
-        }
-      )}
-      {/* <View style={{width:30, height:30, backgroundColor:'red'}}/> */}
-    </View>
-  );
-}
+const RowSection = React.memo(
+  ({
+    section,
+    sectionIndex,
+    currentPassenger,
+    width,
+    maxNbElements,
+    selectSeat,
+    selectedServices,
+    currentSegmentId,
+  }: {
+    section: SeatMapCabinRowSection;
+    sectionIndex: number;
+    currentPassenger: Passenger;
+    width: number;
+    maxNbElements: number;
+    selectSeat: (element: SeatMapCabinRowSectionElement) => void;
+    selectedServices: WithServiceInformation<SelectedService>[];
+    currentSegmentId: string;
+  }) => {
+    const hasOneElement = useMemo(
+      () => section.elements?.length === 1,
+      [section.elements?.length]
+    );
+    const elementWidth = useMemo(
+      () => width / maxNbElements,
+      [maxNbElements, width]
+    );
+    return (
+      <View style={styles.rowSectionView}>
+        {section.elements.map(
+          (element: SeatMapCabinRowSectionElement, index: number) => {
+            const isSelected = selectedServices.filter(
+              (s) =>
+                s.serviceInformation.designator === element.designator &&
+                s.serviceInformation.segmentId === currentSegmentId
+            )?.[0];
+            return (
+              <Element
+                key={`Element_${sectionIndex}_${index}`}
+                currentPassenger={currentPassenger}
+                sectionIndex={sectionIndex}
+                elementIndex={index}
+                element={element}
+                width={elementWidth}
+                isUnique={hasOneElement}
+                selectSeat={selectSeat}
+                isSelected={isSelected}
+              />
+            );
+          }
+        )}
+      </View>
+    );
+  }
+);
 
 function SeatMapUnavailable() {
   return (

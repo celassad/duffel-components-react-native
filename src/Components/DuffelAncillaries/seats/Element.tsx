@@ -1,6 +1,9 @@
+import {
+  SelectedService,
+  WithServiceInformation,
+} from 'duffel-components-react-native/src/Components/DuffelAncillaries/types';
 import React from 'react';
-import { SeatMapCabinRowSectionElement } from '../../../duffelTypes';
-import { SelectedService, WithServiceInformation } from '../types';
+import { Passenger, SeatMapCabinRowSectionElement } from '../../../duffelTypes';
 import AmenityElement from './AmenityElement';
 import EmptyElement from './EmptyElement';
 import { MARGIN } from './helpers';
@@ -10,26 +13,22 @@ const Element = ({
   element,
   sectionIndex,
   elementIndex,
-  currentPassengerId,
+  currentPassenger,
   width,
   isUnique,
   selectSeat,
-  isSeatSelected,
+  isSelected,
 }: {
   element: SeatMapCabinRowSectionElement;
   sectionIndex: number;
   elementIndex: number;
-  currentPassengerId: string;
+  currentPassenger: Passenger;
   width: number;
   isUnique: boolean;
   selectSeat: (element: SeatMapCabinRowSectionElement) => void;
-  isSeatSelected: (
-    element: SeatMapCabinRowSectionElement
-  ) => WithServiceInformation<SelectedService> | undefined;
+  isSelected: WithServiceInformation<SelectedService> | undefined;
 }) => {
   const totalSize = width - MARGIN * 2;
-  console.log(elementIndex);
-  // return  <EmptyElement width={totalSize} />
 
   switch (element.type) {
     case 'empty':
@@ -37,11 +36,12 @@ const Element = ({
     case 'seat':
       return (
         <SeatElement
-          currentPassengerId={currentPassengerId}
+          key={`Seat-${elementIndex}`}
+          currentPassenger={currentPassenger}
           element={element}
           width={totalSize}
           selectSeat={selectSeat}
-          isSeatSelected={isSeatSelected}
+          isSeatSelected={isSelected}
         />
       );
     default:
@@ -56,4 +56,4 @@ const Element = ({
   }
 };
 
-export default Element;
+export default React.memo(Element);

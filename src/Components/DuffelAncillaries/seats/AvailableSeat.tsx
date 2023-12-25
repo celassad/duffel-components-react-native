@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors } from '../../../colors';
 import { ELEMENT_BORDER_WIDTH, MARGIN } from './helpers';
 import PaidSeatIndicator from './SeatPaidIndicator';
@@ -20,11 +20,7 @@ const AvailableSeat = React.memo(
   }) => {
     const disabled = onPress == null;
     return (
-      <TouchableHighlight
-        onPress={onPress}
-        disabled={disabled}
-        underlayColor={colors.SEAT_BACKGROUND}
-      >
+      <TouchableOpacity onPress={onPress} disabled={disabled}>
         <View
           style={[
             {
@@ -43,7 +39,7 @@ const AvailableSeat = React.memo(
           </Text>
           {isFeePayable && <PaidSeatIndicator />}
         </View>
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   }
 );
