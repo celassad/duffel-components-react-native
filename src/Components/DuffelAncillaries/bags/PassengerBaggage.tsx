@@ -53,7 +53,7 @@ export default function PassengerBagage({
         <IncludedBaggageBanner includedBaggage={includedBaggage} t={t} />
       ) : null}
 
-      {passengerServicesForSegment.map((availableService) => (
+      {passengerServicesForSegment?.map((availableService) => (
         <BaggageSelectionController
           key={availableService.id}
           t={t}

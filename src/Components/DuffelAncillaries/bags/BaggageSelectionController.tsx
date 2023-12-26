@@ -47,7 +47,7 @@ export default function BaggageSelectionController({
   function selectService(quantity: number) {
     var selectedServices: WithServiceInformation<SelectedService>[] = [];
 
-    selectedBaggageServices.map((selectedService) => {
+    selectedBaggageServices?.map((selectedService) => {
       if (selectedService.id !== availableService.id) {
         selectedServices.push(selectedService);
       }

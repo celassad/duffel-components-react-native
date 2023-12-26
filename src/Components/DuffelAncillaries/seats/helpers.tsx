@@ -53,7 +53,7 @@ export const getRowNumber = (
 export function hasSeatSelected(
   services: WithServiceInformation<SelectedService>[]
 ) {
-  return services.find((s) => s.serviceInformation.type === 'seat') != null;
+  return services?.find((s) => s.serviceInformation.type === 'seat') != null;
 }
 
 export function getSeatsAddedText(
@@ -70,7 +70,7 @@ export function getSeatsAddedText(
     var quantity = 0;
     var amount = 0;
     var currency = services[0]?.serviceInformation.total_currency;
-    services.map((s) => {
+    services?.map((s) => {
       if (s.serviceInformation.type === 'seat') {
         quantity += s.quantity;
         amount += Number(s.serviceInformation.total_amount);

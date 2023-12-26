@@ -15,7 +15,7 @@ export function getBagsAddedText(
     var quantity = 0;
     var amount = 0;
     var currency = services[0]?.serviceInformation.total_currency;
-    services.map((s) => {
+    services?.map((s) => {
       if (s.serviceInformation.type === 'baggage') {
         quantity += s.quantity;
         amount += Number(s.serviceInformation.total_amount);
@@ -31,5 +31,5 @@ export function getBagsAddedText(
 export function hasBagSelected(
   services: WithServiceInformation<SelectedService>[]
 ) {
-  return services.find((s) => s.serviceInformation.type === 'baggage') != null;
+  return services?.find((s) => s.serviceInformation.type === 'baggage') != null;
 }

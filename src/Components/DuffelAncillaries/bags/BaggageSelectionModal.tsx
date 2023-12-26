@@ -95,7 +95,7 @@ function BaggageSelectionView({
   const totalPrice = useMemo(() => {
     var price = 0;
     var currency = '';
-    selectedBaggageServices.map((s) => {
+    selectedBaggageServices?.map((s) => {
       price += Number(s.serviceInformation.total_amount) * s.quantity;
       currency = s.serviceInformation.total_currency;
     });
@@ -104,7 +104,7 @@ function BaggageSelectionView({
 
   const totalBags = useMemo(() => {
     var bags = 0;
-    selectedBaggageServices.map((s) => {
+    selectedBaggageServices?.map((s) => {
       bags += s.quantity;
     });
     return bags;

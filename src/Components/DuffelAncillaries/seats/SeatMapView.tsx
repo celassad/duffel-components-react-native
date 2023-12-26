@@ -232,7 +232,7 @@ function Row({
 
   return (
     <View style={{ flexDirection: 'row' }}>
-      {row.sections.map((section: SeatMapCabinRowSection, index: number) => {
+      {row.sections?.map((section: SeatMapCabinRowSection, index: number) => {
         return (
           <RowSection
             key={`Section_${rowNumber}_${index}`}

@@ -10,7 +10,7 @@ export default function Legend({ symbols }: { symbols: Set<string> }) {
   return (
     <View style={styles.legendView}>
       <SeatLegend />
-      {[...symbols].map((s) => {
+      {[...symbols]?.map((s) => {
         return <Amenity key={s} symbol={s} />;
       })}
     </View>
