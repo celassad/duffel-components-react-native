@@ -26,6 +26,7 @@ function SeatLegend() {
           seatLabel={''}
           isFeePayable={true}
           selected={false}
+          isForCurrentPassenger={false}
         />
         <Text style={styles.seatText}>Additional cost</Text>
       </View>
@@ -36,6 +37,7 @@ function SeatLegend() {
           seatLabel={''}
           isFeePayable={false}
           selected={false}
+          isForCurrentPassenger={false}
         />
         <Text style={styles.seatText}>Included</Text>
       </View>
@@ -46,6 +48,7 @@ function SeatLegend() {
           seatLabel={''}
           isFeePayable={false}
           selected={true}
+          isForCurrentPassenger={false}
         />
         <Text style={styles.seatText}>Selected</Text>
       </View>
