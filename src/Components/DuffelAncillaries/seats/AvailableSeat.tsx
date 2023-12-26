@@ -11,12 +11,14 @@ const AvailableSeat = React.memo(
     isFeePayable,
     selected,
     onPress,
+    isForCurrentPassenger,
   }: {
     width: number;
     seatLabel: string;
     isFeePayable: boolean;
     selected: boolean;
     onPress?: () => void;
+    isForCurrentPassenger: boolean;
   }) => {
     const disabled = onPress == null;
     return (
@@ -28,6 +30,7 @@ const AvailableSeat = React.memo(
               height: width,
             },
             selected ? styles.SelectedSeatStyle : styles.AvailableSeatStyle,
+            selected && isForCurrentPassenger ? styles.currentPassenger : {},
           ]}
         >
           <Text
@@ -37,7 +40,7 @@ const AvailableSeat = React.memo(
           >
             {seatLabel}
           </Text>
-          {isFeePayable && <PaidSeatIndicator />}
+          {isFeePayable && !selected && <PaidSeatIndicator />}
         </View>
       </TouchableOpacity>
     );
@@ -47,6 +50,10 @@ const AvailableSeat = React.memo(
 export default AvailableSeat;
 
 const styles = StyleSheet.create({
+  currentPassenger: {
+    backgroundColor: colors.CURRENT_PASSENGER_SEAT,
+    borderColor: colors.CURRENT_PASSENGER_SEAT,
+  },
   AvailableSeatText: {
     fontSize: 12,
     color: colors.AVAILABLE_SEAT_CONTENT,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Modal,
   StyleSheet,
@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import { Text } from 'react-native-elements';
+import { colors } from '../../../colors';
 import {
   Offer,
   OfferSliceSegment,
@@ -98,8 +99,18 @@ function SeatSelectionView({
   const [index, setIndex] = useState(0);
   const segments = getSegmentList(offer);
   const nbTabs = segments?.length * passengers?.length ?? 0;
-  const totalPrice = '0';
-  const totalBags = 0;
+
+  const price = useMemo(
+    () =>
+      selectedServices.reduce(
+        (prev, current) =>
+          prev + parseFloat(current.serviceInformation.total_amount),
+        0
+      ),
+    [selectedServices]
+  );
+  const totalSeats = selectedServices.length;
+  const totalPrice = `${price}`;
 
   return (
     <View>
@@ -115,7 +126,7 @@ function SeatSelectionView({
         setSelectedServices={setSelectedServices}
         t={t}
       />
-      <TotalPrice price={totalPrice} nbBags={totalBags} t={t} />
+      <TotalPrice price={totalPrice} nbSeats={totalSeats} t={t} />
       <TabFooter
         index={index}
         setIndex={setIndex}
@@ -175,15 +186,15 @@ function TabView({
 
 function TotalPrice({
   price,
-  nbBags,
+  nbSeats,
   t,
 }: {
   price: string;
-  nbBags: number;
+  nbSeats: number;
   t: any;
 }) {
   const text = capitalizeFirstLetter(
-    `${t('priceFor')} ${withPlural(nbBags, `${t('seat')}`, `${t('seats')}`)}`
+    `${t('priceFor')} ${withPlural(nbSeats, `${t('seat')}`, `${t('seats')}`)}`
   );
   return (
     <>
@@ -220,10 +231,12 @@ function SegmentSeatSelection({
   }`;
   return (
     <View style={styles.SeatSelectionView}>
-      <Text style={styles.sliceTitle}>{title}</Text>
-      <Text
-        style={styles.passengerName}
-      >{`${passenger.given_name} ${passenger.family_name}`}</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Text style={styles.sliceTitle}>{title}</Text>
+        <Text
+          style={styles.passengerName}
+        >{`${passenger.given_name} ${passenger.family_name}`}</Text>
+      </View>
       <SeatMapView
         segment={segment}
         passenger={passenger}
@@ -244,9 +257,9 @@ const styles = StyleSheet.create({
     height: '80%',
   },
   passengerName: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
-    color: 'grey',
+    color: colors.CURRENT_PASSENGER_SEAT,
   },
   dividerStyle: {
     backgroundColor: 'lightgrey',
@@ -271,6 +284,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: BORDER_RADIUS,
     borderTopRightRadius: BORDER_RADIUS,
     padding: MODAL_PADDING,
+    paddingBottom: 0,
     maxHeight: '90%',
   },
   overlay: {

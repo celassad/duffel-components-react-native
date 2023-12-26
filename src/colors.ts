@@ -11,6 +11,7 @@ export const colors = {
   UNAVAILABLE_SEAT_CONTENT: 'hsl(240,3%,85%)',
   UNAVAILABLE_SEAT_OUTLINE: 'hsl(240,3%,85%)',
 
-  SELECTED_SEAT: 'hsl(240,3%,10%)',
+  CURRENT_PASSENGER_SEAT: 'hsl(240,3%,5%)',
   SELECTED_SEAT_CONTENT: '#F7F5F9',
+  SELECTED_SEAT: 'hsl(240,3%,50%)',
 };

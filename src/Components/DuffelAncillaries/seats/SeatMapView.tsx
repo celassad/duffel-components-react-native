@@ -25,6 +25,7 @@ import {
   getSymbols,
 } from './helpers';
 import Legend from './Legend';
+import SelectedSeat from './SelectedSeat';
 
 const windowWidth = Dimensions.get('window').width;
 const MODAL_PADDING = 30;
@@ -54,6 +55,15 @@ const SeatMapView = ({
     [seatMap]
   );
   const symbols = useMemo(() => getSymbols(cabins), [cabins]);
+  const selectedSeat = useMemo(
+    () =>
+      selectedServices.filter(
+        (s) =>
+          s.serviceInformation.segmentId === segment.id &&
+          s.serviceInformation.passengerId === passenger.id
+      )?.[0],
+    [passenger, segment, selectedServices]
+  );
 
   if (!seatMap || !seatMap.cabins || !seatMap.cabins.length)
     return <SeatMapUnavailable />;
@@ -61,8 +71,9 @@ const SeatMapView = ({
   if (!cabins || !cabins.length) {
     return <SeatMapUnavailable />;
   }
+
   return (
-    <View style={{ width: '100%', marginVertical: 30, flex: 1 }}>
+    <View style={{ width: '100%', marginTop: 30, flex: 1 }}>
       <Legend symbols={symbols} />
       {cabins.map((cabin: SeatMapCabin) => {
         return (
@@ -75,6 +86,7 @@ const SeatMapView = ({
           />
         );
       })}
+      {selectedSeat != null && <SelectedSeat seat={selectedSeat} />}
     </View>
   );
 };
@@ -111,30 +123,46 @@ function Cabin({
               s.serviceInformation.passengerId === currentPassenger.id &&
               s.serviceInformation.segmentId === currentSegmentId
           );
+          const isSeatAlreadySelected =
+            services.filter(
+              (s) =>
+                s.serviceInformation.type === 'seat' &&
+                s.serviceInformation.designator === element.designator &&
+                s.serviceInformation.passengerId === currentPassenger.id &&
+                s.serviceInformation.segmentId === currentSegmentId
+            )?.[0] != null;
           if (currentSelectedSeatIndex > -1) {
             services.splice(currentSelectedSeatIndex, 1);
           }
-          services.push({
-            id: elementService.id,
-            quantity: 1,
-            serviceInformation: {
-              type: element.type,
-              segmentId: currentSegmentId ?? '',
-              passengerId: currentPassenger.id ?? '',
-              passengerName:
-                `${currentPassenger.given_name} ${currentPassenger.family_name}` ??
-                '',
-              designator: element.designator,
-              disclosures: element.disclosures,
-              total_amount: elementService.total_amount,
-              total_currency: elementService.total_currency,
-            },
-          });
+          if (!isSeatAlreadySelected) {
+            services.push({
+              id: elementService.id,
+              quantity: 1,
+              serviceInformation: {
+                type: element.type,
+                segmentId: currentSegmentId ?? '',
+                passengerId: currentPassenger.id ?? '',
+                passengerName:
+                  `${currentPassenger.given_name} ${currentPassenger.family_name}` ??
+                  '',
+                designator: element.designator,
+                disclosures: element.disclosures,
+                total_amount: elementService.total_amount,
+                total_currency: elementService.total_currency,
+              },
+            });
+          }
         }
         return services;
       });
     },
-    [currentPassenger, currentSegmentId]
+    [
+      currentPassenger.family_name,
+      currentPassenger.given_name,
+      currentPassenger.id,
+      currentSegmentId,
+      setSelectedServices,
+    ]
   );
 
   const renderItem = ({
@@ -163,6 +191,7 @@ function Cabin({
     <FlatList
       data={cabin.rows}
       renderItem={renderItem}
+      ListFooterComponent={<View style={{ height: 60 }} />}
       // initialNumToRender={1}
     />
   );

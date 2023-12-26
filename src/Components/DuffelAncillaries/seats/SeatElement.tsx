@@ -33,13 +33,22 @@ const SeatElement = ({
 
   if (!seatServiceFromElement) return <SeatElementUnavailable width={width} />;
 
+  const isForCurrentPassenger =
+    isSeatSelected != null &&
+    isSeatSelected.serviceInformation.type === 'seat' &&
+    isSeatSelected.serviceInformation?.passengerId === currentPassenger.id;
+  const selectedForOtherPassenger =
+    isSeatSelected != null && !isForCurrentPassenger;
   return (
     <AvailableSeat
       width={width}
       seatLabel={seatLabel}
       isFeePayable={isFeePayable}
       selected={isSeatSelected != null}
-      onPress={() => selectSeat(element)}
+      isForCurrentPassenger={isForCurrentPassenger}
+      onPress={
+        !selectedForOtherPassenger ? () => selectSeat(element) : undefined
+      }
     />
   );
 };
