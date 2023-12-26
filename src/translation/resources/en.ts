@@ -25,4 +25,6 @@ export default {
   seatCardSubtitle: "Specify where on the plane you'd like to sit",
   seat: 'seat',
   seats: 'seats',
+  seatAdded: 'seat added',
+  seatsAdded: 'seats added',
 };

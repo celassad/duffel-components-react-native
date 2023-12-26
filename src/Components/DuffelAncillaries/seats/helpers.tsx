@@ -4,7 +4,12 @@ import {
   SeatMapCabinRow,
   SeatMapCabinRowSectionElement,
 } from '../../../duffelTypes';
-import { SeatMapCabinRowSectionElementAmenity } from '../types';
+import { withPlural } from '../../tools';
+import {
+  SeatMapCabinRowSectionElementAmenity,
+  SelectedService,
+  WithServiceInformation,
+} from '../types';
 
 export const MARGIN = 3;
 export const ELEMENT_BORDER_WIDTH = 1;
@@ -44,3 +49,36 @@ export const getRowNumber = (
     ? seats[0]?.designator?.substring(0, seats[0]?.designator?.length - 1)
     : null;
 };
+
+export function hasSeatSelected(
+  services: WithServiceInformation<SelectedService>[]
+) {
+  return services.find((s) => s.serviceInformation.type === 'seat') != null;
+}
+
+export function getSeatsAddedText(
+  services: WithServiceInformation<SelectedService>[],
+  t: any
+) {
+  if (
+    !services ||
+    services?.length === 0 ||
+    services.find((s) => s.serviceInformation.type === 'seat') == null
+  ) {
+    return t('seatCardSubtitle');
+  } else {
+    var quantity = 0;
+    var amount = 0;
+    var currency = services[0]?.serviceInformation.total_currency;
+    services.map((s) => {
+      if (s.serviceInformation.type === 'seat') {
+        quantity += s.quantity;
+        amount += Number(s.serviceInformation.total_amount);
+      }
+    });
+
+    return `${withPlural(quantity, t('seatAdded'), t('seatsAdded'))} ${t(
+      'for'
+    )} ${amount} ${currency}`;
+  }
+}

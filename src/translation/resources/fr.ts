@@ -25,4 +25,6 @@ export default {
   seatCardSubtitle: "Choisissez votre siège à l'avance",
   seat: 'siège',
   seats: 'sièges',
+  seatAdded: 'siège ajouté',
+  seatsAdded: 'sièges ajoutés',
 };

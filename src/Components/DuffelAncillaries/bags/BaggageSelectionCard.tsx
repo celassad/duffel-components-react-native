@@ -11,14 +11,14 @@ export default function BaggageSelectionCard({
   offer,
   passengers,
   lng,
-  selectedBaggageServices,
-  setSelectedBaggageServices,
+  selectedServices,
+  setSelectedServices,
 }: {
   offer: Offer;
   passengers: Passenger[];
   lng: 'en' | 'fr';
-  selectedBaggageServices: WithServiceInformation<SelectedService>[];
-  setSelectedBaggageServices: React.Dispatch<
+  selectedServices: WithServiceInformation<SelectedService>[];
+  setSelectedServices: React.Dispatch<
     React.SetStateAction<WithServiceInformation<SelectedService>[]>
   >;
 }) {
@@ -33,10 +33,10 @@ export default function BaggageSelectionCard({
     setVisible(true);
   }
 
-  const subtitle = getBagsAddedText(selectedBaggageServices, t);
+  const subtitle = getBagsAddedText(selectedServices, t);
   const bagSelected = useMemo(
-    () => hasBagSelected(selectedBaggageServices),
-    [selectedBaggageServices]
+    () => hasBagSelected(selectedServices),
+    [selectedServices]
   );
   return (
     <>
@@ -55,8 +55,8 @@ export default function BaggageSelectionCard({
         passengers={passengers}
         handleModal={handleModal}
         visible={visible}
-        selectedBaggageServices={selectedBaggageServices}
-        setSelectedBaggageServices={setSelectedBaggageServices}
+        selectedBaggageServices={selectedServices}
+        setSelectedBaggageServices={setSelectedServices}
         t={t}
       />
     </>

@@ -9,8 +9,8 @@ type DuffelAncillariesProps = {
   offer: Offer;
   passengers: Passenger[];
   lng: 'en' | 'fr';
-  selectedBaggageServices: WithServiceInformation<SelectedService>[];
-  setSelectedBaggageServices: React.Dispatch<
+  selectedServices: WithServiceInformation<SelectedService>[];
+  setSelectedServices: React.Dispatch<
     React.SetStateAction<WithServiceInformation<SelectedService>[]>
   >;
   seatMaps: SeatMap[] | undefined;
@@ -23,8 +23,8 @@ export default function DuffelAncillaries(props: DuffelAncillariesProps) {
         lng={props.lng}
         offer={props.offer}
         passengers={props.passengers}
-        selectedBaggageServices={props.selectedBaggageServices}
-        setSelectedBaggageServices={props.setSelectedBaggageServices}
+        selectedServices={props.selectedServices}
+        setSelectedServices={props.setSelectedServices}
       />
       <View style={{ height: 12 }} />
       <SeatSelectionCard
@@ -32,8 +32,8 @@ export default function DuffelAncillaries(props: DuffelAncillariesProps) {
         offer={props.offer}
         passengers={props.passengers}
         seatMaps={props.seatMaps}
-        selectedServices={props.selectedBaggageServices}
-        setSelectedServices={props.setSelectedBaggageServices}
+        selectedServices={props.selectedServices}
+        setSelectedServices={props.setSelectedServices}
       />
     </View>
   );

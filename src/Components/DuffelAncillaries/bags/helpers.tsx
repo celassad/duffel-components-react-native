@@ -5,7 +5,11 @@ export function getBagsAddedText(
   services: WithServiceInformation<SelectedService>[],
   t: any
 ) {
-  if (!services || services?.length === 0) {
+  if (
+    !services ||
+    services?.length === 0 ||
+    services.find((s) => s.serviceInformation.type === 'baggage') == null
+  ) {
     return t('baggageCardSubtitle');
   } else {
     var quantity = 0;
@@ -24,6 +28,8 @@ export function getBagsAddedText(
   }
 }
 
-export function hasBagSelected(services: SelectedService[]) {
-  return services?.length > 0;
+export function hasBagSelected(
+  services: WithServiceInformation<SelectedService>[]
+) {
+  return services.find((s) => s.serviceInformation.type === 'baggage') != null;
 }

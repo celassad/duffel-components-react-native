@@ -4,6 +4,7 @@ import { Icon, Text } from 'react-native-elements';
 import { Offer, Passenger } from '../../../duffelTypes';
 import i18n from '../../../translation';
 import { SelectedService, WithServiceInformation } from '../types';
+import { getSeatsAddedText, hasSeatSelected } from './helpers';
 import SeatSelectionModal from './SeatSelectionModal';
 
 type SeatSelectionCardProps = {
@@ -29,8 +30,8 @@ export default function SeatSelectionCard(props: SeatSelectionCardProps) {
     setVisible(true);
   }
 
-  const subtitle = t('seatCardSubtitle');
-  const seatSelected = false;
+  const subtitle = getSeatsAddedText(props.selectedServices, t);
+  const seatSelected = hasSeatSelected(props.selectedServices);
   if (!props.seatMaps) {
     return (
       <View>
