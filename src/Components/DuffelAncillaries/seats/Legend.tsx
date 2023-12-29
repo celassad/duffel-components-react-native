@@ -6,18 +6,24 @@ import { parseAmenity, SeatAmenityIcon } from '../../CommonComponents/Icons';
 import AvailableSeat from './AvailableSeat';
 import SeatElementUnavailable from './SeatElementUnavailable';
 
-export default function Legend({ symbols }: { symbols: Set<string> }) {
+export default function Legend({
+  symbols,
+  t,
+}: {
+  symbols: Set<string>;
+  t: any;
+}) {
   return (
     <View style={styles.legendView}>
-      <SeatLegend />
+      <SeatLegend t={t} />
       {[...symbols]?.map((s) => {
-        return <Amenity key={s} symbol={s} />;
+        return <Amenity key={s} symbol={s} t={t} />;
       })}
     </View>
   );
 }
 
-function SeatLegend() {
+function SeatLegend({ t }: { t: any }) {
   return (
     <View style={styles.SeatLegend}>
       <View style={styles.SeatView}>
@@ -28,7 +34,7 @@ function SeatLegend() {
           selected={false}
           isForCurrentPassenger={false}
         />
-        <Text style={styles.seatText}>Additional cost</Text>
+        <Text style={styles.seatText}>{t('additionalCost')}</Text>
       </View>
 
       <View style={styles.SeatView}>
@@ -39,7 +45,7 @@ function SeatLegend() {
           selected={false}
           isForCurrentPassenger={false}
         />
-        <Text style={styles.seatText}>Included</Text>
+        <Text style={styles.seatText}>{t('included')}</Text>
       </View>
 
       <View style={styles.SeatView}>
@@ -50,18 +56,18 @@ function SeatLegend() {
           selected={true}
           isForCurrentPassenger={false}
         />
-        <Text style={styles.seatText}>Selected</Text>
+        <Text style={styles.seatText}>{t('selected')}</Text>
       </View>
 
       <View style={styles.SeatView}>
         <SeatElementUnavailable width={20} />
-        <Text style={styles.seatText}>Unavailable</Text>
+        <Text style={styles.seatText}>{t('unavailable')}</Text>
       </View>
     </View>
   );
 }
 
-function Amenity({ symbol }: { symbol: string }) {
+function Amenity({ symbol, t }: { symbol: string; t: any }) {
   const name = parseAmenity(symbol.split('_')[0] as string);
   if (!name) {
     console.log('Amenity Icon not found for : ', symbol);
@@ -71,7 +77,7 @@ function Amenity({ symbol }: { symbol: string }) {
     <>
       <View style={styles.AmenityView}>
         <SeatAmenityIcon amenity={name} style={{ padding: 6 }} />
-        <Text style={{ color: colors.AMENITY_COLOR }}>{name}</Text>
+        <Text style={{ color: colors.AMENITY_COLOR }}>{t(name)}</Text>
       </View>
       <View style={styles.space} />
     </>
@@ -86,6 +92,7 @@ const styles = StyleSheet.create({
   seatText: {
     color: colors.AMENITY_COLOR,
     paddingLeft: 2,
+    // textTransform:""
   },
   space: {
     width: 8,

@@ -27,5 +27,11 @@ export default {
   seats: 'sièges',
   seatAdded: 'siège ajouté',
   seatsAdded: 'sièges ajoutés',
-  unavailable: 'Indisponible'
+  unavailable: 'Indisponible',
+  additionalCost: 'frais additionnel',
+  selected: 'selectionné',
+  bassinet: 'berceau',
+  lavatory: 'toilettes',
+  exit:'exit',
+  galley: 'galley'
 };

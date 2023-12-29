@@ -27,5 +27,11 @@ export default {
   seats: 'seats',
   seatAdded: 'seat added',
   seatsAdded: 'seats added',
-  unavailable: 'Not available'
+  unavailable: 'Unavailable',
+  additionalCost: 'additional cost',
+  selected: 'selected',
+  bassinet: 'bassinet',
+  lavatory: 'lavatory',
+  exit:'exit',
+  galley: 'galley'
 };

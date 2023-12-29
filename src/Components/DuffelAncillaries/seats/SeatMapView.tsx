@@ -74,7 +74,7 @@ const SeatMapView = ({
 
   return (
     <View style={{ width: '100%', marginTop: 30, flex: 1 }}>
-      <Legend symbols={symbols} />
+      <Legend symbols={symbols} t={t} />
       {cabins.map((cabin: SeatMapCabin) => {
         return (
           <Cabin
