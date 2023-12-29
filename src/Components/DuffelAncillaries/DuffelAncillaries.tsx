@@ -14,6 +14,7 @@ type DuffelAncillariesProps = {
     React.SetStateAction<WithServiceInformation<SelectedService>[]>
   >;
   seatMaps: SeatMap[] | undefined;
+  loading?: boolean;
 };
 
 export default function DuffelAncillaries(props: DuffelAncillariesProps) {
@@ -34,6 +35,7 @@ export default function DuffelAncillaries(props: DuffelAncillariesProps) {
         seatMaps={props.seatMaps}
         selectedServices={props.selectedServices}
         setSelectedServices={props.setSelectedServices}
+        loading={props.loading}
       />
     </View>
   );

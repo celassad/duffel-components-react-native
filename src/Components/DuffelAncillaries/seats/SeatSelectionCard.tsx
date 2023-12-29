@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Icon, Text } from 'react-native-elements';
 import { Offer, Passenger } from '../../../duffelTypes';
 import i18n from '../../../translation';
@@ -16,6 +21,7 @@ type SeatSelectionCardProps = {
   setSelectedServices: React.Dispatch<
     React.SetStateAction<WithServiceInformation<SelectedService>[]>
   >;
+  loading?: boolean;
 };
 
 export default function SeatSelectionCard(props: SeatSelectionCardProps) {
@@ -32,11 +38,44 @@ export default function SeatSelectionCard(props: SeatSelectionCardProps) {
 
   const subtitle = getSeatsAddedText(props.selectedServices, t);
   const seatSelected = hasSeatSelected(props.selectedServices);
+  if (props.loading) {
+    return (
+      <>
+        <View style={styles.container}>
+          <Icon
+            name={'seat-passenger'}
+            type="material-community"
+            style={styles.iconStyle}
+          />
+          <View>
+            <Text style={styles.titleStyle}>{t('seatCardTitle')}</Text>
+            <Text style={styles.subtitleStyle}>{t('seatCardSubtitle')}</Text>
+          </View>
+          <View style={styles.loadingView}>
+            <ActivityIndicator color="grey" />
+          </View>
+        </View>
+      </>
+    );
+  }
   if (!props.seatMaps) {
     return (
-      <View>
-        <Text>seatmaps undefined</Text>
-      </View>
+      <>
+        <View style={styles.container}>
+          <Icon
+            name={'seat-passenger'}
+            type="material-community"
+            style={styles.iconStyle}
+          />
+          <View>
+            <Text style={styles.titleStyle}>{t('seatCardTitle')}</Text>
+            <Text style={styles.subtitleStyle}>{t('seatCardSubtitle')}</Text>
+          </View>
+          <View style={styles.unavailableView}>
+            <Text style={styles.unavailableText}>{t('unavailable')}</Text>
+          </View>
+        </View>
+      </>
     );
   }
   return (
@@ -67,6 +106,23 @@ export default function SeatSelectionCard(props: SeatSelectionCardProps) {
 }
 
 const styles = StyleSheet.create({
+  loadingView: {
+    position: 'absolute',
+    right: 15,
+    alignSelf: 'center',
+  },
+  unavailableText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  unavailableView: {
+    position: 'absolute',
+    right: 15,
+    top: 15,
+    backgroundColor: 'lightgrey',
+    borderRadius: 6,
+    padding: 5,
+  },
   subtitleStyle: {
     color: 'grey',
   },

@@ -27,4 +27,5 @@ export default {
   seats: 'seats',
   seatAdded: 'seat added',
   seatsAdded: 'seats added',
+  unavailable: 'Not available'
 };
